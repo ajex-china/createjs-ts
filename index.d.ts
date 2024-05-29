@@ -107,33 +107,58 @@ declare namespace createjs {
     export function proxy(method: (eventObj: Object) => void, scope: Object, ...arg: any[]): (eventObj: Object) => any;
     export function proxy(method: { handleEvent: (eventObj: Object) => boolean; }, scope: Object, ...arg: any[]): (eventObj: Object) => any;
     export function proxy(method: { handleEvent: (eventObj: Object) => void; }, scope: Object, ...arg: any[]): (eventObj: Object) => any;
-
+    /**
+     * 将灰度 Alpha 贴图图像（或画布）应用到目标，这样结果的 Alpha 通道将从贴图的红色通道复制，RGB 通道将从目标复制。
+     * 通常，建议您使用AlphaMaskFilter，因为它的性能要好得多。
+     */
     export class AlphaMapFilter extends Filter {
         constructor(alphaMap: HTMLImageElement | HTMLCanvasElement);
 
         // properties
+
+        /**
+         * 要用作结果的alpha值的灰度图像（或画布）。这应该与目标的尺寸完全相同。
+         */
         alphaMap: HTMLImageElement | HTMLCanvasElement;
 
         // methods
         clone(): AlphaMapFilter;
     }
-
+    /**
+     * 将遮罩图像（或画布）中的alpha应用于目标，这样结果的alpha通道将从遮罩中导出，而RGB通道将从目标中复制。例如，这可以用于将alpha掩码应用于显示对象。这也可以用于将JPG压缩的RGB图像与PNG32 alpha掩码组合，这可以导致比包含RGB的单个PNG32小得多的文件大小。
+     */
     export class AlphaMaskFilter extends Filter {
         constructor(mask: HTMLImageElement | HTMLCanvasElement);
 
         // properties
+
+        /**
+         * 要用作遮罩的图像（或画布）。
+         */
         mask: HTMLImageElement | HTMLCanvasElement;
 
         // methods
         clone(): AlphaMaskFilter;
     }
 
-
+    /**
+     * 位图表示显示列表中的图像、画布或视频。可以使用现有HTML元素或字符串实例化位图。
+     */
     export class Bitmap extends DisplayObject {
         constructor(imageOrUrl?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string);
 
         // properties
+
+        /**
+         * 要显示的源图像。这可以是CanvasImageSource（图像、视频、画布）、具有返回CanvasImage源的getImage方法的对象或图像的字符串URL。如果是后者，将使用URL作为其src的新图像实例。
+         */
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+        /**
+         * 指定要绘制的源图像的区域。如果省略，将绘制整个图像。
+         * 注意：
+         * 1.视频源必须设置宽度/高度才能正确使用sourceRect
+         * 2.缓存对象将忽略sourceRect属性
+         */
         sourceRect: Rectangle;
 
         // methods
@@ -370,7 +395,9 @@ declare namespace createjs {
         updateCache(compositeOperation?: string): void;
         updateContext(ctx: CanvasRenderingContext2D): void;
     }
-
+    /**
+     * 用于计算和封装与显示相关的属性。
+     */
     export class DisplayProps {
         constructor(visible?: number, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number);
 
@@ -382,10 +409,41 @@ declare namespace createjs {
         visible: boolean;
 
         // methods
+
+        /**
+         * 附加指定的显示属性。这通常用于应用子属性及其父属性。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         append(visible: boolean, alpha: number, shadow: Shadow, compositeOperation: string, matrix?: Matrix2D): DisplayProps;
+        /**
+         * 返回DisplayProps实例的克隆。克隆相关矩阵。
+         */
         clone(): DisplayProps;
+        /**
+         * 将此实例及其矩阵重置为默认值。
+         */
         identity(): DisplayProps;
+        /**
+         * 前置指定的显示属性。这通常用于将父属性应用于子属性。例如，要获取将应用于子对象的组合显示属性。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         prepend(visible: boolean, alpha: number, shadow: Shadow, compositeOperation: string, matrix?: Matrix2D): DisplayProps;
+        /**
+         * 使用指定的值重新初始化实例。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 合成。
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         setValues(visible?: boolean, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number): DisplayProps;
     }
 
@@ -1407,6 +1465,9 @@ declare namespace createjs {
          */
         getResult(value?: any, rawResult?: boolean): Object;
         getTag(): Object;
+        /**
+         * 开始加载资源。
+         */
         load(): void;
         setTag(tag: Object): void;
         toString(): string;
