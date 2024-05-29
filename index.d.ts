@@ -1390,6 +1390,21 @@ declare namespace createjs {
         destroy(): void;
         getItem(value?: string): Object;
         getLoadedItems(): Object[];
+        /**
+         * 通过id获取资源。
+         * 注意：如果加载项中没有提供“id”，则将“src”当作id使用（且不含basePath）。
+         * @param value 资源id
+         * @param rawResult true返回原始数据，false格式化数据，适用于通过XHR加载的内容，如脚本、XML、CSS和图像。如果没有原始数据，则将返回格式化数据。
+         * @returns 返回已经加载的资源。该资源包含如下类型：
+         * 1. 对于图像，返回HTMLImageElement。
+         * 2. JavaScript的脚本（＜script/＞）。请注意，脚本会自动添加到HTMLDOM中。
+         * 3. CSS的样式（＜style/＞或＜link＞）
+         * 4. text的原始文本
+         * 5. 对于JSON，返回Object。
+         * 6. 对于XML，返回XMLDocument。
+         * 7. XHR加载的二进制数组缓冲区。
+         * 8. 对于声音，返回HTMLAudioElement。注意，建议使用SoundJS API来播放加载的音频。具体来说，Flash和WebAudio加载的音频将使用此方法返回一个加载器对象，该对象不能用于播放音频。
+         */
         getResult(value?: any, rawResult?: boolean): Object;
         getTag(): Object;
         load(): void;
