@@ -214,6 +214,12 @@ declare namespace createjs {
         snapToPixel: boolean;
 
         // methods
+
+        /**
+         * 设置用于绘制ScaleSpriteSheet的尺寸
+         * @param newWidth 
+         * @param newHeight 
+         */
         setDrawSize (newWidth: number, newHeight: number): void;
         clone(): ScaleBitmap;
     }
@@ -410,6 +416,13 @@ declare namespace createjs {
         localToGlobal(x: number, y: number, pt?: Point | Object): Point;
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
         set(props: Object): DisplayObject;
+        /**
+         * 允许您手动设置对象的边界，这些对象要么无法计算自己的边界（例如，形状和文本）以供将来引用，要么可以将对象包含在容器边界中。手动设置的边界将始终覆盖计算的边界。边界应该在对象的局部（未转换的）坐标中指定。例如，一个以(0,0)为中心的半径为25px的圆的Shape实例的边界为(-25，-25，50，50)。
+         * @param x 
+         * @param y 
+         * @param width 
+         * @param height 
+         */
         setBounds(x: number, y: number, width: number, height: number): void;
         setTransform(x?: number, y?: number, scaleX?: number, scaleY?: number, rotation?: number, skewX?: number, skewY?: number, regX?: number, regY?: number): DisplayObject;
         uncache(): void;
@@ -1110,6 +1123,10 @@ declare namespace createjs {
         clear(): void;
         clone(): Stage;
         enableDOMEvents(enable?: boolean): void;
+        /**
+         * 为舞台的显示列表启用或禁用（通过传递刷新频次数0）鼠标悬停（mouseover和mouseout）和滚动事件（rollover和rollout）。这些事件的性能消耗可能很高，因此在默认情况下会被禁用。可以通过可选的频率参数独立于鼠标移动事件来控制事件的频率。
+         * @param frequency 可选参数，指定每秒广播鼠标悬停/退出事件的最大次数。设置为0可完全禁用鼠标悬停事件。最大值为50。较低的频率响应较少，但使用较少的CPU。默认值为20。
+         */
         enableMouseOver(frequency?: number): void;
         tick(props?: Object): void;
         toDataURL(backgroundColor: string, mimeType: string): string;
@@ -1171,7 +1188,14 @@ declare namespace createjs {
         updateViewport(width: number, height: number): void;
     }
 
-
+    /**
+     * 显示一行或多行动态文本（不可由用户编辑）。
+     * 支持基本的换行（使用lineWidth），仅在空格和制表符上换行。
+     * 注意，您可以使用DOMElement将HTML文本显示在canvas的上方或下方，通过localToGlobal方法定位，以此作为输入文本使用。
+     * 注意，Text不支持HTML文本，并且一个Text实例只能显示一种字体样式。要使用多种字体样式，您需要创建多个Text实例，并手动定位它们。
+     * 如果你是高手，你可以自己封装一个RichText类，哈哈哈！
+     * @see http://www.createjs.com/Docs/EaselJS/classes/Text.html
+     */
     export class Text extends DisplayObject {
         constructor(text?: string, font?: string, color?: string);
 
@@ -1183,6 +1207,7 @@ declare namespace createjs {
         maxWidth: number;
         outline: number;
         text: string;
+        /** 水平文本对齐方式。"start"、"end"、"left"、"right"和"center"中的任意一个。有关详细信息，请查看whatwg规范。默认值为“left”。 */
         textAlign: string;
         textBaseline: string;
 
