@@ -482,7 +482,7 @@ declare namespace createjs {
         at(x1: number, y1: number, x2: number, y2: number, radius: number): Graphics;
         bf(image: Object, repetition?: string, matrix?: Matrix2D): Graphics;
         bs(image: Object, repetition?: string): Graphics;
-        f(color: string): Graphics;
+        f(color?: string): Graphics;
         lf(colors: string[], ratios: number[], x0: number, y0: number, x1: number, y1: number): Graphics;
         ls(colors: string[], ratios: number[], x0: number, y0: number, x1: number, y1: number): Graphics;
         rf(colors: string[], ratios: number[], x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): Graphics;
