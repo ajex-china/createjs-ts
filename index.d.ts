@@ -76,6 +76,7 @@ declare namespace createjs {
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): Object;
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
         addEventListener(type: string, listener: (e?:Event) => void, useCapture?: boolean): ()=>{}
+        addEventListener(type: string, listener: (e?:any) => void, useCapture?: boolean): ()=>{}
         dispatchEvent(eventObj: Object, target?: Object): boolean;
         dispatchEvent(eventObj: string, target?: Object): boolean;
         dispatchEvent(eventObj: Event, target?: Object): boolean;
