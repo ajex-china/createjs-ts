@@ -1,0 +1,21 @@
+{
+  "name": "createjs-ts",
+  "version": "1.0.1",
+  "description": "createjs to typescript",
+  "main": "createjs-1.0.0.min",
+  "types": "index.d.ts",
+  "keywords": [
+    "createjs",
+    "easeljs",
+    "tweenjs",
+    "soundjs",
+    "preloadjs",
+    "animate"
+  ],
+  "author": "ajex",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajex-china/createjs-ts.git"
+  }
+}
