@@ -77,6 +77,13 @@ declare namespace createjs {
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
         addEventListener(type: string, listener: (e?:Event) => void, useCapture?: boolean): ()=>{}
         addEventListener(type: string, listener: (e?:any) => void, useCapture?: boolean): ()=>{}
+        /**
+         * 将指定的事件分派给所有侦听器。
+         * @param eventObj 具有“type”属性或字符串类型的对象。虽然通用对象可以工作，但建议使用CreateJS事件实例。如果使用了字符串，dispatchEvent将在必要时使用指定的类型构造一个Event实例。后一种方法可以用于避免可能没有任何侦听器的非冒泡事件的事件对象实例化。
+         * @param bubbles 指定将字符串传递给eventObj时的气泡值。
+         * @param cancelable 指定将字符串传递给eventObj时可取消的值。
+         * @returns 如果对可取消事件调用了preventDefault()，则返回false，否则返回true。
+         */
         dispatchEvent(eventObj: Object, target?: Object): boolean;
         dispatchEvent(eventObj: string, target?: Object): boolean;
         dispatchEvent(eventObj: Event, target?: Object): boolean;
@@ -184,14 +191,26 @@ declare namespace createjs {
     }
 
     export class ScaleBitmap extends DisplayObject {
+        /**
+         * 
+         * @param imageOrUrl 源图或者链接地址
+         * @param scale9Grid 指定九区域缩放网格的内部矩形
+         */
         constructor(imageOrUrl: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string, scale9Grid: Rectangle);
 
         // properties
+
+        /** 用来渲染的图像。可以是Image，或者Canvas，又或者Video */
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+        /** 源图的裁剪区域 */
         sourceRect: Rectangle;
+        /** 绘制宽度 */
         drawWidth: number;
+        /** 绘制高度 */
         drawHeight: number;
+        /** 指定九区域缩放网格的内部矩形 */
         scale9Grid: Rectangle;
+        /** ScaleSpriteSheet是否应在整个像素坐标下绘制到画布 */
         snapToPixel: boolean;
 
         // methods
