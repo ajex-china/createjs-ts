@@ -98,7 +98,7 @@ declare namespace createjs {
         on(type: string, listener: (eventObj: Object) => void, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener: { handleEvent: (eventObj: Object) => void; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
-        on(type: string, listener:(eventObj: Object)=>void, scope?: any, once?: boolean, data?: any, useCapture?: boolean):void;
+        on(type: string, listener:(eventObj: any)=>void, scope?: any, once?: boolean, data?: any, useCapture?: boolean):void;
         removeAllEventListeners(type?: string): void;
         removeEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
         removeEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): void;
