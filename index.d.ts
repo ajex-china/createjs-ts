@@ -75,6 +75,15 @@ declare namespace createjs {
         addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): Object;
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
+        addEventListener(type: string, listener: (e?:Event) => void, useCapture?: boolean): ()=>{}
+        addEventListener(type: string, listener: (e?:any) => void, useCapture?: boolean): ()=>{}
+        /**
+         * 将指定的事件分派给所有侦听器。
+         * @param eventObj 具有“type”属性或字符串类型的对象。虽然通用对象可以工作，但建议使用CreateJS事件实例。如果使用了字符串，dispatchEvent将在必要时使用指定的类型构造一个Event实例。后一种方法可以用于避免可能没有任何侦听器的非冒泡事件的事件对象实例化。
+         * @param bubbles 指定将字符串传递给eventObj时的气泡值。
+         * @param cancelable 指定将字符串传递给eventObj时可取消的值。
+         * @returns 如果对可取消事件调用了preventDefault()，则返回false，否则返回true。
+         */
         dispatchEvent(eventObj: Object, target?: Object): boolean;
         dispatchEvent(eventObj: string, target?: Object): boolean;
         dispatchEvent(eventObj: Event, target?: Object): boolean;
@@ -89,6 +98,7 @@ declare namespace createjs {
         on(type: string, listener: (eventObj: Object) => void, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener: { handleEvent: (eventObj: Object) => void; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
+        on(type: string, listener:(eventObj: any)=>void, scope?: any, once?: boolean, data?: any, useCapture?: boolean):void;
         removeAllEventListeners(type?: string): void;
         removeEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
         removeEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): void;
@@ -107,33 +117,58 @@ declare namespace createjs {
     export function proxy(method: (eventObj: Object) => void, scope: Object, ...arg: any[]): (eventObj: Object) => any;
     export function proxy(method: { handleEvent: (eventObj: Object) => boolean; }, scope: Object, ...arg: any[]): (eventObj: Object) => any;
     export function proxy(method: { handleEvent: (eventObj: Object) => void; }, scope: Object, ...arg: any[]): (eventObj: Object) => any;
-
+    /**
+     * 将灰度 Alpha 贴图图像（或画布）应用到目标，这样结果的 Alpha 通道将从贴图的红色通道复制，RGB 通道将从目标复制。
+     * 通常，建议您使用AlphaMaskFilter，因为它的性能要好得多。
+     */
     export class AlphaMapFilter extends Filter {
         constructor(alphaMap: HTMLImageElement | HTMLCanvasElement);
 
         // properties
+
+        /**
+         * 要用作结果的alpha值的灰度图像（或画布）。这应该与目标的尺寸完全相同。
+         */
         alphaMap: HTMLImageElement | HTMLCanvasElement;
 
         // methods
         clone(): AlphaMapFilter;
     }
-
+    /**
+     * 将遮罩图像（或画布）中的alpha应用于目标，这样结果的alpha通道将从遮罩中导出，而RGB通道将从目标中复制。例如，这可以用于将alpha掩码应用于显示对象。这也可以用于将JPG压缩的RGB图像与PNG32 alpha掩码组合，这可以导致比包含RGB的单个PNG32小得多的文件大小。
+     */
     export class AlphaMaskFilter extends Filter {
         constructor(mask: HTMLImageElement | HTMLCanvasElement);
 
         // properties
+
+        /**
+         * 要用作遮罩的图像（或画布）。
+         */
         mask: HTMLImageElement | HTMLCanvasElement;
 
         // methods
         clone(): AlphaMaskFilter;
     }
 
-
+    /**
+     * 位图表示显示列表中的图像、画布或视频。可以使用现有HTML元素或字符串实例化位图。
+     */
     export class Bitmap extends DisplayObject {
         constructor(imageOrUrl?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string);
 
         // properties
+
+        /**
+         * 要显示的源图像。这可以是CanvasImageSource（图像、视频、画布）、具有返回CanvasImage源的getImage方法的对象或图像的字符串URL。如果是后者，将使用URL作为其src的新图像实例。
+         */
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+        /**
+         * 指定要绘制的源图像的区域。如果省略，将绘制整个图像。
+         * 注意：
+         * 1.视频源必须设置宽度/高度才能正确使用sourceRect
+         * 2.缓存对象将忽略sourceRect属性
+         */
         sourceRect: Rectangle;
 
         // methods
@@ -157,17 +192,35 @@ declare namespace createjs {
     }
 
     export class ScaleBitmap extends DisplayObject {
+        /**
+         * 
+         * @param imageOrUrl 源图或者链接地址
+         * @param scale9Grid 指定九区域缩放网格的内部矩形
+         */
         constructor(imageOrUrl: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string, scale9Grid: Rectangle);
 
         // properties
+
+        /** 用来渲染的图像。可以是Image，或者Canvas，又或者Video */
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+        /** 源图的裁剪区域 */
         sourceRect: Rectangle;
+        /** 绘制宽度 */
         drawWidth: number;
+        /** 绘制高度 */
         drawHeight: number;
+        /** 指定九区域缩放网格的内部矩形 */
         scale9Grid: Rectangle;
+        /** ScaleSpriteSheet是否应在整个像素坐标下绘制到画布 */
         snapToPixel: boolean;
 
         // methods
+
+        /**
+         * 设置用于绘制ScaleSpriteSheet的尺寸
+         * @param newWidth 
+         * @param newHeight 
+         */
         setDrawSize (newWidth: number, newHeight: number): void;
         clone(): ScaleBitmap;
     }
@@ -364,13 +417,22 @@ declare namespace createjs {
         localToGlobal(x: number, y: number, pt?: Point | Object): Point;
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
         set(props: Object): DisplayObject;
+        /**
+         * 允许您手动设置对象的边界，这些对象要么无法计算自己的边界（例如，形状和文本）以供将来引用，要么可以将对象包含在容器边界中。手动设置的边界将始终覆盖计算的边界。边界应该在对象的局部（未转换的）坐标中指定。例如，一个以(0,0)为中心的半径为25px的圆的Shape实例的边界为(-25，-25，50，50)。
+         * @param x 
+         * @param y 
+         * @param width 
+         * @param height 
+         */
         setBounds(x: number, y: number, width: number, height: number): void;
         setTransform(x?: number, y?: number, scaleX?: number, scaleY?: number, rotation?: number, skewX?: number, skewY?: number, regX?: number, regY?: number): DisplayObject;
         uncache(): void;
         updateCache(compositeOperation?: string): void;
         updateContext(ctx: CanvasRenderingContext2D): void;
     }
-
+    /**
+     * 用于计算和封装与显示相关的属性。
+     */
     export class DisplayProps {
         constructor(visible?: number, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number);
 
@@ -382,10 +444,41 @@ declare namespace createjs {
         visible: boolean;
 
         // methods
+
+        /**
+         * 附加指定的显示属性。这通常用于应用子属性及其父属性。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         append(visible: boolean, alpha: number, shadow: Shadow, compositeOperation: string, matrix?: Matrix2D): DisplayProps;
+        /**
+         * 返回DisplayProps实例的克隆。克隆相关矩阵。
+         */
         clone(): DisplayProps;
+        /**
+         * 将此实例及其矩阵重置为默认值。
+         */
         identity(): DisplayProps;
+        /**
+         * 前置指定的显示属性。这通常用于将父属性应用于子属性。例如，要获取将应用于子对象的组合显示属性。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         prepend(visible: boolean, alpha: number, shadow: Shadow, compositeOperation: string, matrix?: Matrix2D): DisplayProps;
+        /**
+         * 使用指定的值重新初始化实例。
+         * @param visible 
+         * @param alpha 
+         * @param shadow 
+         * @param compositeOperation 合成。
+         * @param matrix 变换矩阵。默认为单位矩阵。
+         */
         setValues(visible?: boolean, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number): DisplayProps;
     }
 
@@ -1031,6 +1124,10 @@ declare namespace createjs {
         clear(): void;
         clone(): Stage;
         enableDOMEvents(enable?: boolean): void;
+        /**
+         * 为舞台的显示列表启用或禁用（通过传递刷新频次数0）鼠标悬停（mouseover和mouseout）和滚动事件（rollover和rollout）。这些事件的性能消耗可能很高，因此在默认情况下会被禁用。可以通过可选的频率参数独立于鼠标移动事件来控制事件的频率。
+         * @param frequency 可选参数，指定每秒广播鼠标悬停/退出事件的最大次数。设置为0可完全禁用鼠标悬停事件。最大值为50。较低的频率响应较少，但使用较少的CPU。默认值为20。
+         */
         enableMouseOver(frequency?: number): void;
         tick(props?: Object): void;
         toDataURL(backgroundColor: string, mimeType: string): string;
@@ -1092,7 +1189,14 @@ declare namespace createjs {
         updateViewport(width: number, height: number): void;
     }
 
-
+    /**
+     * 显示一行或多行动态文本（不可由用户编辑）。
+     * 支持基本的换行（使用lineWidth），仅在空格和制表符上换行。
+     * 注意，您可以使用DOMElement将HTML文本显示在canvas的上方或下方，通过localToGlobal方法定位，以此作为输入文本使用。
+     * 注意，Text不支持HTML文本，并且一个Text实例只能显示一种字体样式。要使用多种字体样式，您需要创建多个Text实例，并手动定位它们。
+     * 如果你是高手，你可以自己封装一个RichText类，哈哈哈！
+     * @see http://www.createjs.com/Docs/EaselJS/classes/Text.html
+     */
     export class Text extends DisplayObject {
         constructor(text?: string, font?: string, color?: string);
 
@@ -1104,6 +1208,7 @@ declare namespace createjs {
         maxWidth: number;
         outline: number;
         text: string;
+        /** 水平文本对齐方式。"start"、"end"、"left"、"right"和"center"中的任意一个。有关详细信息，请查看whatwg规范。默认值为“left”。 */
         textAlign: string;
         textBaseline: string;
 
@@ -1407,6 +1512,9 @@ declare namespace createjs {
          */
         getResult(value?: any, rawResult?: boolean): Object;
         getTag(): Object;
+        /**
+         * 开始加载资源。
+         */
         load(): void;
         setTag(tag: Object): void;
         toString(): string;
@@ -1568,7 +1676,9 @@ declare namespace createjs {
         // methods
         clone(): ProgressEvent;
     }
-
+    /**
+     * 帮助解析加载项和确定文件类型等。
+     */
     export class RequestUtils
     {
         // properties
@@ -1579,12 +1689,24 @@ declare namespace createjs {
         // methods
         static buildPath(src: string, data?: Object): string;
         static formatQueryString(data: Object, query?: Object[]): string;
+        /**
+         * 使用通用扩展确定对象的类型。请注意，如果类型是不寻常的扩展，则可以将其与加载项一起传入。
+         * @param extension 用于确定加载类型的文件扩展名。
+         */
         static getTypeByExtension(extension: string): string;
         static isAudioTag(item: Object): boolean;
+        /**
+         * 确定是否应将特定类型加载为二进制文件。目前，只有专门标记为“二进制”的图像和项目才加载为二进制。请注意，音频不是二进制类型，因为如果加载为二进制，则无法使用音频标签进行回放。插件可以将项类型更改为二进制，以确保获得可使用的二进制结果。二进制文件是使用XHR2加载的。类型在AbstractLoader上定义为静态常量。
+         * @param type 加载项类型
+         */
         static isBinary(type: string): boolean;
         static isCrossDomain(item: Object): boolean;
         static isImageTag(item: Object): boolean;
         static isLocal(item: Object): boolean;
+        /**
+         * 确定特定类型是否是基于文本的资源，并且应以UTF-8加载。
+         * @param type 加载项类型
+         */
         static isText(type: string): boolean;
         static isVideoTag(item: Object): boolean;
         static parseURI(path: string): Object;
