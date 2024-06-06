@@ -1676,7 +1676,9 @@ declare namespace createjs {
         // methods
         clone(): ProgressEvent;
     }
-
+    /**
+     * 帮助解析加载项和确定文件类型等。
+     */
     export class RequestUtils
     {
         // properties
@@ -1687,12 +1689,24 @@ declare namespace createjs {
         // methods
         static buildPath(src: string, data?: Object): string;
         static formatQueryString(data: Object, query?: Object[]): string;
+        /**
+         * 使用通用扩展确定对象的类型。请注意，如果类型是不寻常的扩展，则可以将其与加载项一起传入。
+         * @param extension 用于确定加载类型的文件扩展名。
+         */
         static getTypeByExtension(extension: string): string;
         static isAudioTag(item: Object): boolean;
+        /**
+         * 确定是否应将特定类型加载为二进制文件。目前，只有专门标记为“二进制”的图像和项目才加载为二进制。请注意，音频不是二进制类型，因为如果加载为二进制，则无法使用音频标签进行回放。插件可以将项类型更改为二进制，以确保获得可使用的二进制结果。二进制文件是使用XHR2加载的。类型在AbstractLoader上定义为静态常量。
+         * @param type 加载项类型
+         */
         static isBinary(type: string): boolean;
         static isCrossDomain(item: Object): boolean;
         static isImageTag(item: Object): boolean;
         static isLocal(item: Object): boolean;
+        /**
+         * 确定特定类型是否是基于文本的资源，并且应以UTF-8加载。
+         * @param type 加载项类型
+         */
         static isText(type: string): boolean;
         static isVideoTag(item: Object): boolean;
         static parseURI(path: string): Object;
