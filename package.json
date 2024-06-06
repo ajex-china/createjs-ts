@@ -1,6 +1,6 @@
 {
   "name": "createjs-ts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "createjs to typescript",
   "main": "createjs-1.0.0.min",
   "types": "index.d.ts",
