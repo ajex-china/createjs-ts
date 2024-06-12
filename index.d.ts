@@ -108,9 +108,31 @@ declare namespace createjs {
         toString(): string;
         willTrigger(type: string): boolean;
     }
-
+    /**
+     * 为新类设置原型链和构造函数属性。
+     * 
+     * 这应该在创建类构造函数之后立即调用。
+     * 
+     * @param subclass 
+     * @param superclass 
+     */
     export function extend(subclass: () => any, superclass: () => any): () => any;     // returns the subclass prototype
+    /**
+     * 在传入的数组中查找指定值searchElement的第一个匹配项，并返回该值的索引。如果找不到值，则返回-1。
+     * @param array 数组
+     * @param searchElement 匹配项
+     */
     export function indexOf(array: any[], searchElement: Object): number;
+    /**
+     * 通过创建格式为prefix_methodName的别名，提升超类上被重写的任何方法。建议使用超类的名称作为前缀。超类的构造函数的别名总是以前缀_构造函数的格式添加。这允许子类在不使用function.call的情况下调用超类方法，从而提供更好的性能。
+     * 
+     * 例如，如果MySubClass扩展了MySuperClass，并且两者都定义了一个draw方法，那么调用promote(MySubClass, "MySuperClass")将向MySubClass添加一个MySupClass_constructor方法，并将MySupClass上的draw方法提升为MySupClass_draw的MySubClass原型。
+     * 
+     * 这应该在类的原型完全定义之后调用。
+     * 
+     * @param subclass 超类
+     * @param prefix 前缀
+     */
     export function promote(subclass: () => any, prefix: string): () => any;
 
     export function proxy(method: (eventObj: Object) => boolean, scope: Object, ...arg: any[]): (eventObj: Object) => any;
