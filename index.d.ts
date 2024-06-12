@@ -22,18 +22,36 @@ interface NativeMouseEvent extends MouseEvent {
 }
 
 declare namespace createjs {
+    /**
+     * 包含所有事件共享的属性和方法，以便与EventDispatcher一起使用。
+     * 请注意，事件对象经常被重用，因此您永远不应该依赖于事件对象在调用堆栈之外的状态。
+     */
     export class Event {
         constructor(type?: string, bubbles?: boolean, cancelable?: boolean);
 
         // properties
+        /** 指示事件是否会在显示列表中冒泡 */
         bubbles: boolean;
+        /** 指示是否可以通过preventDefault取消此事件的默认行为。这是通过Event构造函数设置的 */
         cancelable: boolean;
+        /** 正在从中调度冒泡事件的当前目标。对于非冒泡事件，这将始终与目标相同。例如，如果childObj.parent=parentObj，并且从childObj生成冒泡事件，则parentObj上的侦听器将接收到target=childObj（原始目标）和currentTarget=parentObj（添加侦听器的位置）的事件 */
         currentTarget: any; // It is 'Object' type officially, but 'any' is easier to use.
+        /** 指示是否对此事件调用了preventDefault */
         defaultPrevented: boolean;
+        /**
+         * 对于冒泡事件，这表示当前事件阶段：
+         * 1.捕获阶段：从顶部父对象开始到目标
+         * 2.在目标阶段：当前正在从目标调度
+         * 3.冒泡阶段：从目标到顶部父对象
+        */
         eventPhase: number;
+        /** 指示是否对此事件调用了stopImmediatePropagation */
         immediatePropagationStopped: boolean;
+        /** 指示是否对此事件调用了stopPropagation或stopImmediatePropagation */
         propagationStopped: boolean;
+        /** 指示是否对此事件调用了remove */
         removed: boolean;
+        /** 事件目标对象 */
         target: any; // It is 'Object' type officially, but 'any' is easier to use.
         timeStamp: number;
         type: string;
