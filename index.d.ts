@@ -214,23 +214,58 @@ declare namespace createjs {
         // methods
         clone(): Bitmap;
     }
-
+    /**
+     * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将DisplayObject对象渲染为位图。实际缓存本身仍然与cacheCanvas一起存储在目标上。Bitmap对象执行缓存几乎没有好处，因为它已经是单个图像了。如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。缓存不会自动更新，除非调用cache方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
+     * 缓存也是应用滤镜的必要条件。当滤镜不改变时，直接使用缓存显示，不需要每帧渲染。
+     */
     export class BitmapCache {
         constructor();
 
         // properties
+        /** 跟踪缓存已更新的次数，主要用于防止重复的cacheURL。这对于查看缓存是否已更新非常有用。 */
         cacheID: number;
 
         // methods
+        /**
+         * 返回围绕所有应用的滤镜的边界，依赖于每个滤镜来描述它如何更改边界。
+         * @param target 要检查其滤镜边界的对象。
+         * @param output 可选参数，如果提供，则计算的边界将应用于该对象。
+         */
         static getFilterBounds(target: DisplayObject, output?: Rectangle): Rectangle;
+        /**
+         * 返回此对象的字符串表示形式。
+         */
         toString(): string;
+        /**
+         * 实际上创建了正确的缓存表面和与之相关的属性。缓存函数和这个类描述讨论了缓存及其好处。以下是如何使用options对象的详细细节。
+         * 1.如果options.useGL设置为"new"，则会创建一个StageGL并将其包含在其中，以便在渲染缓存时使用。
+         * 2.如果options.useGL设置为"stage"，如果当前stage是StageGL，则将使用它。如果没有，它将默认为"new"。
+         * 3.如果options.useGL是StageGL实例，它不会创建一个实例，而是使用提供的实例。
+         * 4.如果options.useGL为undefined，将执行上下文2D缓存。
+         * 
+         * 这意味着您可以使用StageGL和2D的任何组合，其中一个、两个或两个阶段和缓存都是WebGL。在StageGL显示列表中使用"new"是非常不受欢迎的，但仍然是一种选择。由于负面性能原因和上述类别复杂性中提到的图像加载限制，应避免使用。
+         * 
+         * 当“options.useGL”设置为目标和WebGL的父阶段时，通过使用"RenderTextures"而不是画布元素来提高性能。这些是存储在GPU中的图形卡上的内部纹理。因为它们不再是画布，所以无法执行常规画布所能执行的操作。这样做的好处是避免了将纹理从GPU来回复制到Canvas元素的速度减慢。这意味着“阶段”是可用的推荐选项。
+         * 
+         * StageGL缓存不会推断绘制StageGL当前无法绘制的对象的能力，即在缓存形状、文本等时不要使用WebGL上下文缓存。
+         * 
+         * 您可能希望创建自己的StageGL实例来控制诸如透明颜色、透明度、AA等因素。如果您这样做，则传入一个新实例而不是“true”，库将自动在您的实例上将StageGL/isCacheControlled设置为true。这将触发它正确运行，而不是假设您的主上下文是WebGL。
+         * @param target 
+         * @param x 
+         * @param y 
+         * @param width 
+         * @param height 
+         * @param scale 将创建缓存的比例。例如，如果使用myShape.cache（0,0100100.2）缓存矢量形状，则生成的cacheCanvas将为200x200 px。这样可以更逼真地缩放和旋转缓存的元素。默认值为1。
+         */
         define(target: DisplayObject, x: number, y: number, width: number, height: number, scale?: number): void;
         update(compositeOperation?: string): void;
         release(): void;
         getCacheDataURL(): string;
         draw(ctx: CanvasRenderingContext2D): boolean;
     }
-
+    /**
+     * 对位图使用九宫格缩放
+     */
     export class ScaleBitmap extends DisplayObject {
         /**
          * 
