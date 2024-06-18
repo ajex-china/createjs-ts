@@ -214,7 +214,10 @@ declare namespace createjs {
         // methods
         clone(): Bitmap;
     }
-
+    /**
+     * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将DisplayObject对象渲染为位图。实际缓存本身仍然与cacheCanvas一起存储在目标上。Bitmap对象执行缓存几乎没有好处，因为它已经是单个图像了。如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。缓存不会自动更新，除非调用cache方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
+     * 缓存也是应用滤镜的必要条件。当滤镜不改变时，直接使用缓存显示，不需要每帧渲染。
+     */
     export class BitmapCache {
         constructor();
 
@@ -230,7 +233,9 @@ declare namespace createjs {
         getCacheDataURL(): string;
         draw(ctx: CanvasRenderingContext2D): boolean;
     }
-
+    /**
+     * 对位图使用九宫格缩放
+     */
     export class ScaleBitmap extends DisplayObject {
         /**
          * 
