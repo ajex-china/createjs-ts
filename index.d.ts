@@ -299,8 +299,18 @@ declare namespace createjs {
         setDrawSize (newWidth: number, newHeight: number): void;
         clone(): ScaleBitmap;
     }
-
+    /**
+     * 使用sprite sheet中定义的位图图示符显示文本。支持使用换行字符的多行文本，但不支持自动换行。
+     * 有关定义图示符的详细信息，请参见 spriteSheet 属性。
+     * 
+     * 重要提示： 虽然BitmapText扩展了Container，但它并不是设计为一个容器。因此，addChild和removeChild等方法被禁用。
+     */
     export class BitmapText extends DisplayObject {
+        /**
+         * 
+         * @param text 要显示的文本。
+         * @param spriteSheet 定义字符图示符的精灵表。
+         */
         constructor(text?:string, spriteSheet?:SpriteSheet);
 
         static maxPoolSize: number;
@@ -309,6 +319,18 @@ declare namespace createjs {
         letterSpacing: number;
         lineHeight: number;
         spaceWidth: number;
+        /**
+         * 一个SpriteSheet实例，用于定义此位图文本的图示符。每个字形/角色都应该在精灵表中定义一个与对应角色名称相同的单帧动画。例如，以下动画定义：
+         * 
+         * 		"A": {frames: [0]}
+         * 
+         * 将指示应为“A”字符绘制子画面索引0处的帧。简短的形式也是可以接受的：
+         * 
+         * 		"A": 0
+         * 
+         * 请注意，如果在精灵表中找不到文本中的字符，它也会尝试使用其他大小写（大写或小写）。
+         * 有关定义精灵表数据的详细信息，请参见精灵表。
+         */
         spriteSheet: SpriteSheet;
         text: string;
     }
