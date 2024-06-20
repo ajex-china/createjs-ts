@@ -332,19 +332,25 @@ declare namespace createjs {
          * 有关定义精灵表数据的详细信息，请参见精灵表。
          */
         spriteSheet: SpriteSheet;
+        /** 要显示的文本。 */
         text: string;
     }
-
+    /**
+     * 将方框模糊应用于上下文2D中的DisplayObjects，并将高斯模糊应用于webgl中。请注意，此滤镜相当密集，尤其是当质量设置为高于1时。
+     */
     export class BlurFilter extends Filter {
-        constructor(blurX?: number, blurY?: number, quality?: number);
+        constructor(blurX?: number, blurY?: number, quality?: number)
 
         // properties
-        blurX: number;
-        blurY: number;
-        quality: number;
+        /** 以像素为单位的水平模糊半径。 */
+        blurX: number
+        /** 以像素为单位的垂直模糊半径。 */
+        blurY: number
+        /** 模糊迭代次数。 */
+        quality: number
 
         // methods
-        clone(): BlurFilter;
+        clone(): BlurFilter
     }
 
     export class ButtonHelper {
