@@ -352,8 +352,33 @@ declare namespace createjs {
         // methods
         clone(): BlurFilter
     }
-
+    /**
+     * ButtonHelper是一个帮助类，用于从 MovieClip 或 Sprite 实例创建交互式按钮。该类将截获对象的鼠标事件，并自动调用 gotoAndStop 或 gotoAndPlay 到相应的动画标签，添加指针光标，并允许用户定义命中状态帧。
+     * 
+     * ButtonHelper实例不需要加入stage，但应保留引用以防止垃圾收集。
+     * 
+     * 注意：只有启用了enableMouseOver，按钮的over状态才会触发。
+     * 
+     * Example
+     * 
+     * 		var helper = new createjs.ButtonHelper(myInstance, "out", "over", "down", false, myInstance, "hit");
+     * 		myInstance.addEventListener("click", handleClick);
+     * 		function handleClick(event) {
+     * 		    // Click Happened.
+     * 		}
+     * 
+     */
     export class ButtonHelper {
+        /**
+         * 
+         * @param target 要管理的实例。
+         * @param outLabel 当鼠标指针移出按钮时要跳转到的标签或动画。
+         * @param overLabel 当鼠标指针悬浮在按钮时要跳转到的标签或动画。
+         * @param downLabel 当鼠标指针在按钮上按下时要跳转到的标签或动画。
+         * @param play 当按钮状态改变时，是调用"gotoAndPlay"还是"gotoAndStop"？
+         * @param hitArea 一个可选项目，用作按钮的点击区域。如果未对此进行定义，则将使用按钮的可见区域。请注意，hitState可以使用与“target”参数相同的实例。
+         * @param hitLabel hitArea实例上定义hitArea边界的标签或动画。如果这是null，那么将使用hitArea的默认状态*。
+         */
         constructor(target: Sprite, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
         constructor(target: MovieClip, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
 
