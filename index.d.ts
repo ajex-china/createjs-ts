@@ -453,12 +453,31 @@ declare namespace createjs {
         // methods
         clone(): ColorFilter;
     }
-
+    /**
+     * 提供用于组合矩阵以与ColorMatrixFilter一起使用的辅助函数。大多数方法都返回实例以方便链式调用。
+     * 
+     * Example
+     * 
+     * 		myColorMatrix.adjustHue(20).adjustBrightness(50);
+     * 
+     * 有关如何应用滤镜的示例，请参见Filter，或有关如何使用ColorMatrix更改DisplayObject颜色的示例，参见ColorMatrixFilter。
+     */
     export class ColorMatrix {
         constructor(brightness?: number, contrast?: number, saturation?: number, hue?: number);
 
         // methods
+        /**
+         * 通过将指定值添加到红色、绿色和蓝色通道来调整像素颜色的亮度。正值会使图像更亮，负值会使其更暗。
+         * @param value 介于-255和255之间的值，该值将添加到RGB通道中。
+         */
         adjustBrightness(value: number): ColorMatrix;
+        /**
+         * 调整亮度、对比度、饱和度和色相的快捷方式。相当于按顺序调用adjustHue（色相）、adjustContrast（对比度）、adjustBrightness（亮度）、adjutoSaturation（饱和度）。
+         * @param brightness 
+         * @param contrast 
+         * @param saturation 
+         * @param hue 
+         */
         adjustColor(brightness: number, contrast: number, saturation: number, hue: number): ColorMatrix;
         adjustContrast(value: number): ColorMatrix;
         adjustHue(value: number): ColorMatrix;
