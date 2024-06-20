@@ -401,18 +401,53 @@ declare namespace createjs {
         getEnabled(): boolean;
         toString(): string;
     }
-
+    /**
+     * 将颜色变换应用于DisplayObjects。
+     * 
+     * Example
+     * 
+     * 本例绘制一个红色圆圈，然后将其转换为蓝色。这是通过将所有通道相乘为0（透明度通道除外，透明度通道设置为1），然后将255添加到蓝色通道来实现的。
+     * 
+     * 		var shape = new createjs.Shape().set({x:100,y:100});
+     * 		shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);
+     * 
+     * 		shape.filters = [
+     * 		    new createjs.ColorFilter(0,0,0,1, 0,0,255,0)
+     * 		];
+     * 		shape.cache(-50, -50, 100, 100);
+     * 
+     * 有关应用滤镜的详细信息，请参见Filter。
+     */
     export class ColorFilter extends Filter {
+        /**
+         * 
+         * @param redMultiplier 与红色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param greenMultiplier 与绿色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param blueMultiplier 与蓝色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param alphaMultiplier 与alpha通道相乘的量。这是一个介于0和1之间的范围。
+         * @param redOffset 相乘后要添加到红色通道的数量。这是一个介于-255和255之间的范围。
+         * @param greenOffset 相乘后要添加到绿色通道的数量。这是一个介于-255和255之间的范围。
+         * @param blueOffset 相乘后要添加到蓝色通道的数量。这是一个介于-255和255之间的范围。
+         * @param alphaOffset 相乘后要添加到alpha通道的数量。这是一个介于-255和255之间的范围。
+         */
         constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
 
         // properties
+        /** 与红色通道相乘的量。这是一个介于0和1之间的范围。 */
         alphaMultiplier: number;
+        /** 相乘后要添加到alpha通道的数量。这是一个介于-255和255之间的范围。 */
         alphaOffset: number;
+        /** 与蓝色通道相乘的量。这是一个介于0和1之间的范围。 */
         blueMultiplier: number;
+        /** 相乘后要添加到蓝色通道的数量。这是一个介于-255和255之间的范围。 */
         blueOffset: number;
+        /** 与绿色通道相乘的量。这是一个介于0和1之间的范围。 */
         greenMultiplier: number;
+        /** 相乘后要添加到绿色通道的数量。这是一个介于-255和255之间的范围。 */
         greenOffset: number;
+        /** 与红色通道相乘的量。这是一个介于0和1之间的范围。 */
         redMultiplier: number;
+        /** 相乘后要添加到红色通道的数量。这是一个介于-255和255之间的范围。 */
         redOffset: number;
 
         // methods
