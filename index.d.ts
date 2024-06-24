@@ -479,15 +479,45 @@ declare namespace createjs {
          * @param hue 
          */
         adjustColor(brightness: number, contrast: number, saturation: number, hue: number): ColorMatrix;
+        /**
+         * 调整像素颜色的对比度。正值将增加对比度，负值将降低对比度。
+         * @param value 介于-100和100之间的值。
+         */
         adjustContrast(value: number): ColorMatrix;
+        /**
+         * 调整像素颜色的色调。
+         * @param value 介于-180和180之间的值。
+         */
         adjustHue(value: number): ColorMatrix;
+        /**
+         * 调整像素的颜色饱和度。正值将增加饱和度，负值将降低饱和度（趋向灰度）。
+         * @param value 介于-100和100之间的值。
+         */
         adjustSaturation(value: number): ColorMatrix;
         clone(): ColorMatrix;
         concat(...matrix: number[]): ColorMatrix;
         concat(matrix: ColorMatrix): ColorMatrix;
+        /**
+         * danzen新增的声明，目前还不支持，请勿使用
+         * @param ...matrix 
+         */
         copy(...matrix: number[]): ColorMatrix;
+        /**
+         * 将指定矩阵的值复制到此矩阵。
+         * @param matrix 
+         */
         copy(matrix: ColorMatrix): ColorMatrix;
+        /**
+         * 将矩阵重置为单位值。
+         */
         reset(): ColorMatrix;
+        /**
+         * 使用指定的值重置实例。
+         * @param brightness 
+         * @param contrast 
+         * @param saturation 
+         * @param hue 
+         */
         setColor( brightness: number, contrast: number, saturation: number, hue: number ): ColorMatrix;
         toArray(): number[];
         toString(): string;
