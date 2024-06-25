@@ -495,7 +495,15 @@ declare namespace createjs {
          */
         adjustSaturation(value: number): ColorMatrix;
         clone(): ColorMatrix;
+        /**
+         * danzen新增的声明，目前还不支持，请勿使用
+         * @param ...matrix 
+         */
         concat(...matrix: number[]): ColorMatrix;
+        /**
+         * 将指定的矩阵与此矩阵连接（相乘）。
+         * @param matrix 
+         */
         concat(matrix: ColorMatrix): ColorMatrix;
         /**
          * danzen新增的声明，目前还不支持，请勿使用
@@ -522,25 +530,34 @@ declare namespace createjs {
         toArray(): number[];
         toString(): string;
     }
-
+    /**
+     * 允许您执行复杂的颜色操作，如修改饱和度、亮度或反转。有关更改颜色的详细信息，请参见ColorMatrix。为了更容易地进行颜色变换，请考虑ColorFilter。
+     */
     export class ColorMatrixFilter extends Filter {
         constructor(matrix: number[] | ColorMatrix);
 
         // properties
+        /** 描述要执行的颜色操作的4x5矩阵。另请参阅ColorMatrix类。 */
         matrix: number[] | ColorMatrix;
 
         // methods
         clone(): ColorMatrixFilter;
     }
-
-
+    /**
+     * Container是一个可嵌套的显示列表，允许您使用复合显示元素。例如，可以将手臂、腿、躯干和头部位图实例组合到一个“人物容器”中，并将它们变换为一个组，同时仍然可以相对移动各个部分。容器的子级具有与其父级Container连接的transform和alpha属性。
+     * 例如，放置在x=50且阿尔法=0.7的Container中的x=100且阿尔法=0.5的Shape将在x=150且阿尔法=0.35处渲染到画布上。容器有一些开销，所以通常不应该创建一个容器来容纳一个子容器。
+     */
     export class Container extends DisplayObject {
         constructor();
 
         // properties
+        /** 显示列表中的子项数组。您通常应该使用子管理方法，如addChild、removeChild、swapChildren等，而不是直接访问它，但它是为高级用途而包含的。 */
         children: DisplayObject[];
+        /** 指示是否独立启用此容器的子级以进行鼠标/指针交互。如果为false，子级将聚合在容器下——例如，单击子级形状将触发容器上的单击事件。说白了就是容器内子级是否可以接收鼠标/指针交互。 */
         mouseChildren: boolean;
+        /** 返回容器中的子级数。 */
         numChildren: number;
+        /** 如果为false，则tick将不会传播到此容器的子级。这可以提供一些性能优势。除了阻止“tick”事件被调度外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite&MovieClip帧前进、DOMElement可见性处理）。 */
         tickChildren: boolean;
 
         // methods
