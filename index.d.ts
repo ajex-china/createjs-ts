@@ -22,18 +22,36 @@ interface NativeMouseEvent extends MouseEvent {
 }
 
 declare namespace createjs {
+    /**
+     * 包含所有事件共享的属性和方法，以便与EventDispatcher一起使用。
+     * 请注意，事件对象经常被重用，因此您永远不应该依赖于事件对象在调用堆栈之外的状态。
+     */
     export class Event {
         constructor(type?: string, bubbles?: boolean, cancelable?: boolean);
 
         // properties
+        /** 指示事件是否会在显示列表中冒泡 */
         bubbles: boolean;
+        /** 指示是否可以通过preventDefault取消此事件的默认行为。这是通过Event构造函数设置的 */
         cancelable: boolean;
+        /** 正在从中调度冒泡事件的当前目标。对于非冒泡事件，这将始终与目标相同。例如，如果childObj.parent=parentObj，并且从childObj生成冒泡事件，则parentObj上的侦听器将接收到target=childObj（原始目标）和currentTarget=parentObj（添加侦听器的位置）的事件 */
         currentTarget: any; // It is 'Object' type officially, but 'any' is easier to use.
+        /** 指示是否对此事件调用了preventDefault */
         defaultPrevented: boolean;
+        /**
+         * 对于冒泡事件，这表示当前事件阶段：
+         * 1.捕获阶段：从顶部父对象开始到目标
+         * 2.在目标阶段：当前正在从目标调度
+         * 3.冒泡阶段：从目标到顶部父对象
+        */
         eventPhase: number;
+        /** 指示是否对此事件调用了stopImmediatePropagation */
         immediatePropagationStopped: boolean;
+        /** 指示是否对此事件调用了stopPropagation或stopImmediatePropagation */
         propagationStopped: boolean;
+        /** 指示是否对此事件调用了remove */
         removed: boolean;
+        /** 事件目标对象 */
         target: any; // It is 'Object' type officially, but 'any' is easier to use.
         timeStamp: number;
         type: string;
@@ -108,9 +126,31 @@ declare namespace createjs {
         toString(): string;
         willTrigger(type: string): boolean;
     }
-
+    /**
+     * 为新类设置原型链和构造函数属性。
+     * 
+     * 这应该在创建类构造函数之后立即调用。
+     * 
+     * @param subclass 
+     * @param superclass 
+     */
     export function extend(subclass: () => any, superclass: () => any): () => any;     // returns the subclass prototype
+    /**
+     * 在传入的数组中查找指定值searchElement的第一个匹配项，并返回该值的索引。如果找不到值，则返回-1。
+     * @param array 数组
+     * @param searchElement 匹配项
+     */
     export function indexOf(array: any[], searchElement: Object): number;
+    /**
+     * 通过创建格式为prefix_methodName的别名，提升超类上被重写的任何方法。建议使用超类的名称作为前缀。超类的构造函数的别名总是以前缀_构造函数的格式添加。这允许子类在不使用function.call的情况下调用超类方法，从而提供更好的性能。
+     * 
+     * 例如，如果MySubClass扩展了MySuperClass，并且两者都定义了一个draw方法，那么调用promote(MySubClass, "MySuperClass")将向MySubClass添加一个MySupClass_constructor方法，并将MySupClass上的draw方法提升为MySupClass_draw的MySubClass原型。
+     * 
+     * 这应该在类的原型完全定义之后调用。
+     * 
+     * @param subclass 超类
+     * @param prefix 前缀
+     */
     export function promote(subclass: () => any, prefix: string): () => any;
 
     export function proxy(method: (eventObj: Object) => boolean, scope: Object, ...arg: any[]): (eventObj: Object) => any;
@@ -174,23 +214,58 @@ declare namespace createjs {
         // methods
         clone(): Bitmap;
     }
-
+    /**
+     * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将DisplayObject对象渲染为位图。实际缓存本身仍然与cacheCanvas一起存储在目标上。Bitmap对象执行缓存几乎没有好处，因为它已经是单个图像了。如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。缓存不会自动更新，除非调用cache方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
+     * 缓存也是应用滤镜的必要条件。当滤镜不改变时，直接使用缓存显示，不需要每帧渲染。
+     */
     export class BitmapCache {
         constructor();
 
         // properties
+        /** 跟踪缓存已更新的次数，主要用于防止重复的cacheURL。这对于查看缓存是否已更新非常有用。 */
         cacheID: number;
 
         // methods
+        /**
+         * 返回围绕所有应用的滤镜的边界，依赖于每个滤镜来描述它如何更改边界。
+         * @param target 要检查其滤镜边界的对象。
+         * @param output 可选参数，如果提供，则计算的边界将应用于该对象。
+         */
         static getFilterBounds(target: DisplayObject, output?: Rectangle): Rectangle;
+        /**
+         * 返回此对象的字符串表示形式。
+         */
         toString(): string;
+        /**
+         * 实际上创建了正确的缓存表面和与之相关的属性。缓存函数和这个类描述讨论了缓存及其好处。以下是如何使用options对象的详细细节。
+         * 1.如果options.useGL设置为"new"，则会创建一个StageGL并将其包含在其中，以便在渲染缓存时使用。
+         * 2.如果options.useGL设置为"stage"，如果当前stage是StageGL，则将使用它。如果没有，它将默认为"new"。
+         * 3.如果options.useGL是StageGL实例，它不会创建一个实例，而是使用提供的实例。
+         * 4.如果options.useGL为undefined，将执行上下文2D缓存。
+         * 
+         * 这意味着您可以使用StageGL和2D的任何组合，其中一个、两个或两个阶段和缓存都是WebGL。在StageGL显示列表中使用"new"是非常不受欢迎的，但仍然是一种选择。由于负面性能原因和上述类别复杂性中提到的图像加载限制，应避免使用。
+         * 
+         * 当“options.useGL”设置为目标和WebGL的父阶段时，通过使用"RenderTextures"而不是画布元素来提高性能。这些是存储在GPU中的图形卡上的内部纹理。因为它们不再是画布，所以无法执行常规画布所能执行的操作。这样做的好处是避免了将纹理从GPU来回复制到Canvas元素的速度减慢。这意味着“阶段”是可用的推荐选项。
+         * 
+         * StageGL缓存不会推断绘制StageGL当前无法绘制的对象的能力，即在缓存形状、文本等时不要使用WebGL上下文缓存。
+         * 
+         * 您可能希望创建自己的StageGL实例来控制诸如透明颜色、透明度、AA等因素。如果您这样做，则传入一个新实例而不是“true”，库将自动在您的实例上将StageGL/isCacheControlled设置为true。这将触发它正确运行，而不是假设您的主上下文是WebGL。
+         * @param target 
+         * @param x 
+         * @param y 
+         * @param width 
+         * @param height 
+         * @param scale 将创建缓存的比例。例如，如果使用myShape.cache（0,0100100.2）缓存矢量形状，则生成的cacheCanvas将为200x200 px。这样可以更逼真地缩放和旋转缓存的元素。默认值为1。
+         */
         define(target: DisplayObject, x: number, y: number, width: number, height: number, scale?: number): void;
         update(compositeOperation?: string): void;
         release(): void;
         getCacheDataURL(): string;
         draw(ctx: CanvasRenderingContext2D): boolean;
     }
-
+    /**
+     * 对位图使用九宫格缩放
+     */
     export class ScaleBitmap extends DisplayObject {
         /**
          * 
@@ -224,8 +299,18 @@ declare namespace createjs {
         setDrawSize (newWidth: number, newHeight: number): void;
         clone(): ScaleBitmap;
     }
-
+    /**
+     * 使用sprite sheet中定义的位图图示符显示文本。支持使用换行字符的多行文本，但不支持自动换行。
+     * 有关定义图示符的详细信息，请参见 spriteSheet 属性。
+     * 
+     * 重要提示： 虽然BitmapText扩展了Container，但它并不是设计为一个容器。因此，addChild和removeChild等方法被禁用。
+     */
     export class BitmapText extends DisplayObject {
+        /**
+         * 
+         * @param text 要显示的文本。
+         * @param spriteSheet 定义字符图示符的精灵表。
+         */
         constructor(text?:string, spriteSheet?:SpriteSheet);
 
         static maxPoolSize: number;
@@ -234,23 +319,66 @@ declare namespace createjs {
         letterSpacing: number;
         lineHeight: number;
         spaceWidth: number;
+        /**
+         * 一个SpriteSheet实例，用于定义此位图文本的图示符。每个字形/角色都应该在精灵表中定义一个与对应角色名称相同的单帧动画。例如，以下动画定义：
+         * 
+         * 		"A": {frames: [0]}
+         * 
+         * 将指示应为“A”字符绘制子画面索引0处的帧。简短的形式也是可以接受的：
+         * 
+         * 		"A": 0
+         * 
+         * 请注意，如果在精灵表中找不到文本中的字符，它也会尝试使用其他大小写（大写或小写）。
+         * 有关定义精灵表数据的详细信息，请参见精灵表。
+         */
         spriteSheet: SpriteSheet;
+        /** 要显示的文本。 */
         text: string;
     }
-
+    /**
+     * 将方框模糊应用于上下文2D中的DisplayObjects，并将高斯模糊应用于webgl中。请注意，此滤镜相当密集，尤其是当质量设置为高于1时。
+     */
     export class BlurFilter extends Filter {
-        constructor(blurX?: number, blurY?: number, quality?: number);
+        constructor(blurX?: number, blurY?: number, quality?: number)
 
         // properties
-        blurX: number;
-        blurY: number;
-        quality: number;
+        /** 以像素为单位的水平模糊半径。 */
+        blurX: number
+        /** 以像素为单位的垂直模糊半径。 */
+        blurY: number
+        /** 模糊迭代次数。 */
+        quality: number
 
         // methods
-        clone(): BlurFilter;
+        clone(): BlurFilter
     }
-
+    /**
+     * ButtonHelper是一个帮助类，用于从 MovieClip 或 Sprite 实例创建交互式按钮。该类将截获对象的鼠标事件，并自动调用 gotoAndStop 或 gotoAndPlay 到相应的动画标签，添加指针光标，并允许用户定义命中状态帧。
+     * 
+     * ButtonHelper实例不需要加入stage，但应保留引用以防止垃圾收集。
+     * 
+     * 注意：只有启用了enableMouseOver，按钮的over状态才会触发。
+     * 
+     * Example
+     * 
+     * 		var helper = new createjs.ButtonHelper(myInstance, "out", "over", "down", false, myInstance, "hit");
+     * 		myInstance.addEventListener("click", handleClick);
+     * 		function handleClick(event) {
+     * 		    // Click Happened.
+     * 		}
+     * 
+     */
     export class ButtonHelper {
+        /**
+         * 
+         * @param target 要管理的实例。
+         * @param outLabel 当鼠标指针移出按钮时要跳转到的标签或动画。
+         * @param overLabel 当鼠标指针悬浮在按钮时要跳转到的标签或动画。
+         * @param downLabel 当鼠标指针在按钮上按下时要跳转到的标签或动画。
+         * @param play 当按钮状态改变时，是调用"gotoAndPlay"还是"gotoAndStop"？
+         * @param hitArea 一个可选项目，用作按钮的点击区域。如果未对此进行定义，则将使用按钮的可见区域。请注意，hitState可以使用与“target”参数相同的实例。
+         * @param hitLabel hitArea实例上定义hitArea边界的标签或动画。如果这是null，那么将使用hitArea的默认状态*。
+         */
         constructor(target: Sprite, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
         constructor(target: MovieClip, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
 
@@ -273,62 +401,163 @@ declare namespace createjs {
         getEnabled(): boolean;
         toString(): string;
     }
-
+    /**
+     * 将颜色变换应用于DisplayObjects。
+     * 
+     * Example
+     * 
+     * 本例绘制一个红色圆圈，然后将其转换为蓝色。这是通过将所有通道相乘为0（透明度通道除外，透明度通道设置为1），然后将255添加到蓝色通道来实现的。
+     * 
+     * 		var shape = new createjs.Shape().set({x:100,y:100});
+     * 		shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);
+     * 
+     * 		shape.filters = [
+     * 		    new createjs.ColorFilter(0,0,0,1, 0,0,255,0)
+     * 		];
+     * 		shape.cache(-50, -50, 100, 100);
+     * 
+     * 有关应用滤镜的详细信息，请参见Filter。
+     */
     export class ColorFilter extends Filter {
+        /**
+         * 
+         * @param redMultiplier 与红色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param greenMultiplier 与绿色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param blueMultiplier 与蓝色通道相乘的量。这是一个介于0和1之间的范围。
+         * @param alphaMultiplier 与alpha通道相乘的量。这是一个介于0和1之间的范围。
+         * @param redOffset 相乘后要添加到红色通道的数量。这是一个介于-255和255之间的范围。
+         * @param greenOffset 相乘后要添加到绿色通道的数量。这是一个介于-255和255之间的范围。
+         * @param blueOffset 相乘后要添加到蓝色通道的数量。这是一个介于-255和255之间的范围。
+         * @param alphaOffset 相乘后要添加到alpha通道的数量。这是一个介于-255和255之间的范围。
+         */
         constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
 
         // properties
+        /** 与红色通道相乘的量。这是一个介于0和1之间的范围。 */
         alphaMultiplier: number;
+        /** 相乘后要添加到alpha通道的数量。这是一个介于-255和255之间的范围。 */
         alphaOffset: number;
+        /** 与蓝色通道相乘的量。这是一个介于0和1之间的范围。 */
         blueMultiplier: number;
+        /** 相乘后要添加到蓝色通道的数量。这是一个介于-255和255之间的范围。 */
         blueOffset: number;
+        /** 与绿色通道相乘的量。这是一个介于0和1之间的范围。 */
         greenMultiplier: number;
+        /** 相乘后要添加到绿色通道的数量。这是一个介于-255和255之间的范围。 */
         greenOffset: number;
+        /** 与红色通道相乘的量。这是一个介于0和1之间的范围。 */
         redMultiplier: number;
+        /** 相乘后要添加到红色通道的数量。这是一个介于-255和255之间的范围。 */
         redOffset: number;
 
         // methods
         clone(): ColorFilter;
     }
-
+    /**
+     * 提供用于组合矩阵以与ColorMatrixFilter一起使用的辅助函数。大多数方法都返回实例以方便链式调用。
+     * 
+     * Example
+     * 
+     * 		myColorMatrix.adjustHue(20).adjustBrightness(50);
+     * 
+     * 有关如何应用滤镜的示例，请参见Filter，或有关如何使用ColorMatrix更改DisplayObject颜色的示例，参见ColorMatrixFilter。
+     */
     export class ColorMatrix {
         constructor(brightness?: number, contrast?: number, saturation?: number, hue?: number);
 
         // methods
+        /**
+         * 通过将指定值添加到红色、绿色和蓝色通道来调整像素颜色的亮度。正值会使图像更亮，负值会使其更暗。
+         * @param value 介于-255和255之间的值，该值将添加到RGB通道中。
+         */
         adjustBrightness(value: number): ColorMatrix;
+        /**
+         * 调整亮度、对比度、饱和度和色相的快捷方式。相当于按顺序调用adjustHue（色相）、adjustContrast（对比度）、adjustBrightness（亮度）、adjutoSaturation（饱和度）。
+         * @param brightness 
+         * @param contrast 
+         * @param saturation 
+         * @param hue 
+         */
         adjustColor(brightness: number, contrast: number, saturation: number, hue: number): ColorMatrix;
+        /**
+         * 调整像素颜色的对比度。正值将增加对比度，负值将降低对比度。
+         * @param value 介于-100和100之间的值。
+         */
         adjustContrast(value: number): ColorMatrix;
+        /**
+         * 调整像素颜色的色调。
+         * @param value 介于-180和180之间的值。
+         */
         adjustHue(value: number): ColorMatrix;
+        /**
+         * 调整像素的颜色饱和度。正值将增加饱和度，负值将降低饱和度（趋向灰度）。
+         * @param value 介于-100和100之间的值。
+         */
         adjustSaturation(value: number): ColorMatrix;
         clone(): ColorMatrix;
+        /**
+         * danzen新增的声明，目前还不支持，请勿使用
+         * @param ...matrix 
+         */
         concat(...matrix: number[]): ColorMatrix;
+        /**
+         * 将指定的矩阵与此矩阵连接（相乘）。
+         * @param matrix 
+         */
         concat(matrix: ColorMatrix): ColorMatrix;
+        /**
+         * danzen新增的声明，目前还不支持，请勿使用
+         * @param ...matrix 
+         */
         copy(...matrix: number[]): ColorMatrix;
+        /**
+         * 将指定矩阵的值复制到此矩阵。
+         * @param matrix 
+         */
         copy(matrix: ColorMatrix): ColorMatrix;
+        /**
+         * 将矩阵重置为单位值。
+         */
         reset(): ColorMatrix;
+        /**
+         * 使用指定的值重置实例。
+         * @param brightness 
+         * @param contrast 
+         * @param saturation 
+         * @param hue 
+         */
         setColor( brightness: number, contrast: number, saturation: number, hue: number ): ColorMatrix;
         toArray(): number[];
         toString(): string;
     }
-
+    /**
+     * 允许您执行复杂的颜色操作，如修改饱和度、亮度或反转。有关更改颜色的详细信息，请参见ColorMatrix。为了更容易地进行颜色变换，请考虑ColorFilter。
+     */
     export class ColorMatrixFilter extends Filter {
         constructor(matrix: number[] | ColorMatrix);
 
         // properties
+        /** 描述要执行的颜色操作的4x5矩阵。另请参阅ColorMatrix类。 */
         matrix: number[] | ColorMatrix;
 
         // methods
         clone(): ColorMatrixFilter;
     }
-
-
+    /**
+     * Container是一个可嵌套的显示列表，允许您使用复合显示元素。例如，可以将手臂、腿、躯干和头部位图实例组合到一个“人物容器”中，并将它们变换为一个组，同时仍然可以相对移动各个部分。容器的子级具有与其父级Container连接的transform和alpha属性。
+     * 例如，放置在x=50且阿尔法=0.7的Container中的x=100且阿尔法=0.5的Shape将在x=150且阿尔法=0.35处渲染到画布上。容器有一些开销，所以通常不应该创建一个容器来容纳一个子容器。
+     */
     export class Container extends DisplayObject {
         constructor();
 
         // properties
+        /** 显示列表中的子项数组。您通常应该使用子管理方法，如addChild、removeChild、swapChildren等，而不是直接访问它，但它是为高级用途而包含的。 */
         children: DisplayObject[];
+        /** 指示是否独立启用此容器的子级以进行鼠标/指针交互。如果为false，子级将聚合在容器下——例如，单击子级形状将触发容器上的单击事件。说白了就是容器内子级是否可以接收鼠标/指针交互。 */
         mouseChildren: boolean;
+        /** 返回容器中的子级数。 */
         numChildren: number;
+        /** 如果为false，则tick将不会传播到此容器的子级。这可以提供一些性能优势。除了阻止“tick”事件被调度外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite&MovieClip帧前进、DOMElement可见性处理）。 */
         tickChildren: boolean;
 
         // methods
