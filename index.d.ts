@@ -1416,6 +1416,7 @@ declare namespace createjs {
         setTextureParams(gl: WebGLRenderingContext, isPOT?: boolean): void;
         updateSimultaneousTextureCount(count?: number): void;
         updateViewport(width: number, height: number): void;
+        setClearColor(color:string|number):void;
     }
 
     /**
