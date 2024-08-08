@@ -112,6 +112,31 @@ declare namespace createjs {
         off(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): void;
         off(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): void;
         off(type: string, listener: Function, useCapture?: boolean): void; // It is necessary for "arguments.callee"
+        /**
+         * 一种使用addEventListener的快捷方法，可以更容易地指定执行范围，使侦听器只运行一次，将任意数据与侦听器相关联，并删除侦听器。
+此方法通过创建匿名包装器函数并使用addEventListener订阅它来工作。返回包装器函数以与removeEventListener一起使用（或关闭）。
+重要提示：要删除添加了on的侦听器，您必须将返回的包装器函数作为侦听器传递，或使用remove。同样，每次调用NEW包装器函数时，都会订阅，因此使用相同参数对on的多次调用将创建多个侦听器。
+         * 
+         *Example
+         * 
+         * 		var listener = myBtn.on("click", handleClick, null, false, {count:3});
+         * 		function handleClick(evt, data) {
+         * 			data.count -= 1;
+         * 			console.log(this == myBtn); // true - scope defaults to the dispatcher
+         * 			if (data.count == 0) {
+         * 				alert("clicked 3 times!");
+         * 				myBtn.off("click", listener);
+         * 				// alternately: evt.remove();
+         * 			}
+         * 		}
+         * 
+         * @param type 事件类型
+         * @param listener 侦听器
+         * @param scope 执行侦听器的作用域。对于函数侦听器，默认为dispatcher/currentTarget，对于对象侦听器，则默认为侦听器本身（即使用handleEvent）。直白点说就是this指向谁，默认是指向侦听器自身。
+         * @param once 是否仅执行一次侦听器
+         * @param data 传参
+         * @param useCapture 
+         */
         on(type: string, listener: (eventObj: Object) => boolean, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         on(type: string, listener: (eventObj: Object) => void, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
@@ -1513,6 +1538,7 @@ declare namespace createjs {
         static off(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): void;
         static off(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): void;
         static off(type: string, listener: Function, useCapture?: boolean): void; // It is necessary for "arguments.callee"
+
         static on(type: string, listener: (eventObj: Object) => boolean, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         static on(type: string, listener: (eventObj: Object) => void, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Function;
         static on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
