@@ -668,6 +668,14 @@ declare namespace createjs {
         globalToLocal(x: number, y: number, pt?: Point | Object): Point;
         hitTest(x: number, y: number): boolean;
         isVisible(): boolean;
+        /**
+         * 将指定的x和y位置从显示对象的本地坐标空间转换到全局（舞台）坐标空间。
+         * 例如，这可用于将HTML标签定位在嵌套显示对象上的特定点上。返回一个Point实例，其x和y属性与舞台上的变换坐标相关。
+         * 注意：如果舞台有设置缩放的话，需要自己计算缩放。例如返回的Point实例是p，则实际的坐标是(p.x/stage.scaleX,p.y/stage.scaleY)。
+         * @param x 
+         * @param y 
+         * @param pt 
+         */
         localToGlobal(x: number, y: number, pt?: Point | Object): Point;
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
         set(props: Object): DisplayObject;
