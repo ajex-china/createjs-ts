@@ -1323,12 +1323,19 @@ declare namespace createjs {
         clone(): void; // throw error
         stopAsync(): void;
     }
-
+    /**
+     * SpriteSheetUtils类是用于处理SpriteSheets的静态方法的集合。子画面是一系列图像（通常是动画帧）组合成规则网格上的单个图像。例如，一个由8个100x100图像组成的动画可以组合成一个400x200的子画面（4帧宽2高）。SpriteSheetUtils类使用静态接口，不应实例化。
+     */
     export class SpriteSheetUtils {
         /**
          * @deprecated
          */
         static addFlippedFrames(spriteSheet: SpriteSheet, horizontal?: boolean, vertical?: boolean, both?: boolean): void; // deprecated
+        /**
+         * 将指定子画面的一帧作为新的PNG图像返回。这可能有用的一个例子是使用spritesheet帧作为位图填充的源。
+         * @param spriteSheet 从中提取帧的SpriteSheet实例。
+         * @param frameOrAnimation 要提取的帧号或动画名称。如果指定了动画名称，则只会提取动画的第一帧。
+         */
         static extractFrame(spriteSheet: SpriteSheet, frameOrAnimation: number | string): HTMLImageElement;
         /**
          * @deprecated
