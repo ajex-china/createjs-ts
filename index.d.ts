@@ -1280,7 +1280,44 @@ declare namespace createjs {
         image: HTMLImageElement;
         rect: Rectangle;
     }
-
+    /**
+     * 封装与精灵表关联的属性和方法。精灵表是一系列图像（通常是动画帧）组合成一个或多个较大的图像。例如，一个由八个100x100图像组成的动画可以组合成一个400x200的精灵表（4帧宽，2帧高）。
+     * 传递给SpriteSheet构造函数的数据定义了：
+     * 1.要使用的源图像。
+     * 2.单个图像帧的位置。
+     * 3.形成命名动画的序列帧。可选。
+     * 4.目标播放帧率。可选。
+     * 
+     * SpriteSheet格式
+     * SpriteSheets是一个具有两个必需属性（图像和帧）和两个可选属性（帧率和动画）的对象。这使得它们很容易在javascript代码或JSON中定义。
+     * 
+     * 图像
+     * 一组源图像。图像可以是HTMlimage实例，也可以是图像的uri。建议采用前者来控制预加载。
+     * 
+     * 		images: [image1, "path/to/image2.png"],
+     * 
+     * 帧
+     * 定义各个帧。帧数据支持两种格式：当所有帧的大小都相同（在网格中）时，使用具有width、height、regX、regY和count属性的对象。
+     * 1.需要宽度和高度，并指定框架的尺寸
+     * 2.regX和regY表示帧的注册点或“原点”
+     * 3.间距表示帧之间的间距
+     * 4.margin指定图像周围的边距
+     * 5.count允许您指定精灵表中的总帧数；如果省略，则将基于源图像和帧的尺寸来计算。帧将根据其在源图像中的位置（从左到右，从上到下）分配索引。
+     * 
+     * 		frames: {width:64, height:64, count:20, regX: 32, regY:64, spacing:0, margin:0}
+     * 
+     * 如果帧的大小不同，请使用帧定义数组。每个定义本身都是一个数组，其中有4个必需项和3个可选项，顺序如下：
+     * 1.前四个，x、y、宽度和高度是必需的，用于定义框架矩形。
+     * 2.第五个参数imageIndex指定源图像的索引（默认为0）。
+     * 3.最后两个regX和regY指定帧的注册点。
+     * 
+     * 		frames: [
+     * 		    // x, y, width, height, imageIndex*, regX*, regY*
+     * 		    [64, 0, 96, 64],
+     * 		    [0, 0, 64, 64, 1, 32, 32]
+     * 		    // etc.
+     * 		]
+     */
     export class SpriteSheet extends EventDispatcher {
         constructor(data: Object);
 
@@ -1324,7 +1361,7 @@ declare namespace createjs {
         stopAsync(): void;
     }
     /**
-     * SpriteSheetUtils类是用于处理SpriteSheets的静态方法的集合。子画面是一系列图像（通常是动画帧）组合成规则网格上的单个图像。例如，一个由8个100x100图像组成的动画可以组合成一个400x200的子画面（4帧宽2高）。SpriteSheetUtils类使用静态接口，不应实例化。
+     * SpriteSheetUtils类是用于处理SpriteSheets的静态方法的集合。精灵表是一系列图像（通常是动画帧）组合成规则网格上的单个图像。例如，一个由8个100x100图像组成的动画可以组合成一个400x200的精灵表（4帧宽2帧高）。SpriteSheetUtils类使用静态接口，不应实例化。
      */
     export class SpriteSheetUtils {
         /**
@@ -1332,7 +1369,7 @@ declare namespace createjs {
          */
         static addFlippedFrames(spriteSheet: SpriteSheet, horizontal?: boolean, vertical?: boolean, both?: boolean): void; // deprecated
         /**
-         * 将指定子画面的一帧作为新的PNG图像返回。这可能有用的一个例子是使用spritesheet帧作为位图填充的源。
+         * 将指定精灵表的一帧作为新的PNG图像返回。这可能有用的一个例子是使用spritesheet帧作为位图填充的源。
          * @param spriteSheet 从中提取帧的SpriteSheet实例。
          * @param frameOrAnimation 要提取的帧号或动画名称。如果指定了动画名称，则只会提取动画的第一帧。
          */
