@@ -1325,6 +1325,68 @@ declare namespace createjs {
      * 		    [0, 0, 64, 64, 1, 32, 32]
      * 		    // etc.
      * 		]
+     * 
+     * 动画
+     * 可选项。定义序列帧动画的名称。每个属性对应一个同名动画。每个动画必须指定要播放的帧，还可以包括相对播放速度（例如，2将以双倍速度播放，0.5以一半速度播放），以及完成后要播放的下一个动画的名称。
+     * 
+     * 支持三种格式来定义动画中的帧，可以根据需要进行混合和匹配：
+     * 1.对于单帧动画，您可以简单地指定帧索引
+     * 
+     * 		animations: {
+     * 		    sit: 7
+     * 		}
+     * 
+     * 2.对于连续帧的动画，您可以使用一个数组，其中按顺序包含两个必需项和两个可选项：开始、结束、下一步和速度。这将从头到尾播放帧。
+     * 
+     * 		animations: {
+     * 		    // start, end, next*, speed*
+     * 		    run: [0, 8],
+     * 		    jump: [9, 12, "run", 2]
+     * 		}
+     * 
+     * 3.对于非连续帧，您可以使用具有frames属性的对象来定义要按顺序播放的帧索引数组。该对象还可以指定下一步和速度属性。
+     * 
+     * 		animations: {
+     * 		    walk: {
+     * 		        frames: [1,2,3,3,2,1]
+     * 		    },
+     * 		    shoot: {
+     * 		        frames: [1,4,5,6],
+     * 		        next: "walk",
+     * 		        speed: 0.5
+     * 		    }
+     * 		}
+     * 
+     * 注意：速度属性是在EaselJS 0.7.0中添加的。早期版本具有频率属性，这与速度相反。例如，在早期版本中，值“4”是正常速度的1/4，但在EaselJS 0.7.0+中是正常速度的4倍。
+     * 
+     * 帧速率
+     * 可选。指示播放此精灵表的默认帧速率，单位为每秒帧数。有关更多信息，请参阅帧率。
+     * 
+     * 		framerate: 20
+     * 
+     * 请注意，只有在Ticker生成的tick事件中提供了阶段更新方法时，Sprite帧率才有效。
+     * 
+     * 		createjs.Ticker.on("tick", handleTick);
+     * 		function handleTick(event) {
+     * 		    stage.update(event);
+     * 		}
+     * 
+     * 案例
+     * 定义一个简单的精灵表，其中一张图像“sprites.jpg”排列规格为50x50的网格中，有三个动画：“站立”显示第一帧，“运行”循环第1-5帧，“跳跃”播放第6-8帧并按顺序返回运行。
+     * 
+     * 		var data = {
+     * 		    images: ["sprites.jpg"],
+     * 		    frames: {width:50, height:50},
+     * 		    animations: {
+     * 		        stand:0,
+     * 		        run:[1,5],
+     * 		        jump:[6,8,"run"]
+     * 		    }
+     * 		};
+     * 		var spriteSheet = new createjs.SpriteSheet(data);
+     * 		var animation = new createjs.Sprite(spriteSheet, "run");
+     * 
+     * 
      */
     export class SpriteSheet extends EventDispatcher {
         constructor(data: Object);
