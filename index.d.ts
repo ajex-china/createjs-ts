@@ -1386,9 +1386,32 @@ declare namespace createjs {
      * 		var spriteSheet = new createjs.SpriteSheet(data);
      * 		var animation = new createjs.Sprite(spriteSheet, "run");
      * 
+     * 生成SpriteSheet图像
+     * 可以通过在PhotoShop中组合图像并手动指定帧大小或坐标来手动创建Spritesheets，但是有许多工具可以帮助实现这一点。
+     * 1.从Adobe Flash/Animate导出SpriteSheets或HTML5内容支持EaselJS SpriteSheet格式。
+     * 2.流行的Texture Packer支持EaselJS。
+     * 3.Adobe Flash/Animate中的SWF动画可以使用Zoë导出到SpriteSheets
      * 
+     * 跨域问题
+     * 警告：使用以下方式与交互时，跨源加载的图像将引发跨源安全错误：
+     * 1.鼠标。
+     * 2.如getObjectUnderPoint()方法。
+     * 3.滤镜。
+     * 4.缓存。
+     * 
+     * 在将图像传递给EaselJS之前，您可以通过在图像上设置crossOrigin属性来解决这个问题，或者在PreloadJS的LoadQueue或LoadItems上设置crossOrigin属性。
+     * 
+     * 		var img = new Image();
+     * 		img.crossOrigin="Anonymous";
+     * 		img.src = "http://server-with-CORS-support.com/path/to/image.jpg";
+     * 
+     * 如果将字符串路径传递给SpriteSheets，它们将无法跨域工作。存储图像的服务器必须支持跨域请求，否则将无法工作。有关更多信息，请查看MDN上的CORS概述。
      */
     export class SpriteSheet extends EventDispatcher {
+        /**
+         * 
+         * @param data 描述SpriteSheet数据的对象。
+         */
         constructor(data: Object);
 
         // properties
@@ -1398,6 +1421,10 @@ declare namespace createjs {
 
         // methods
         clone(): SpriteSheet;
+        /**
+         * 返回一个定义指定动画的对象。返回的对象包含：
+         * @param name 
+         */
         getAnimation(name: string): SpriteSheetAnimation;
         /**
          * @deprecated - use the 'animations' property instead
