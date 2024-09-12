@@ -112,6 +112,7 @@ declare namespace createjs {
         off(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): void;
         off(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): void;
         off(type: string, listener: Function, useCapture?: boolean): void; // It is necessary for "arguments.callee"
+        off<T extends Event = Event>(type: string, listener: Function|((eventObj?: T)=>void), useCapture?: boolean): void;
         /**
          * 一种使用addEventListener的快捷方法，可以更容易地指定执行范围，使侦听器只运行一次，将任意数据与侦听器相关联，并删除侦听器。
 此方法通过创建匿名包装器函数并使用addEventListener订阅它来工作。返回包装器函数以与removeEventListener一起使用（或关闭）。
@@ -142,6 +143,7 @@ declare namespace createjs {
         on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener: { handleEvent: (eventObj: Object) => void; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener:(eventObj: any)=>void, scope?: any, once?: boolean, data?: any, useCapture?: boolean):void;
+        on<T extends Event = Event>(type: string, listener: Function|((eventObj?: T)=>void), scope?: any, once?: boolean, data?: any, useCapture?: boolean):Function|((eventObj?: T)=>void);
         removeAllEventListeners(type?: string): void;
         removeEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
         removeEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): void;
