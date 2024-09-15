@@ -617,18 +617,34 @@ declare namespace createjs {
         swapChildren(child1: DisplayObject, child2: DisplayObject): void;
         swapChildrenAt(index1: number, index2: number): void;
     }
-
+    /**
+     * DisplayObject是一个抽象类，不能直接构建的。子类可以构建，如Container、Bitmap和Shape。DisplayObject是EaselJS库中所有显示类的基类。它定义了所有显示对象之间共享的核心属性和方法，如转换属性（x、y、scaleX、scaleY等）、缓存和鼠标处理程序。
+     */
     export class DisplayObject extends EventDispatcher {
         constructor();
 
         // properties
+        /** 此显示对象的alpha（透明度）。0是完全透明的，1是完全不透明的。 */
         alpha: number;
+        /** 如果已创建缓存，则返回管理cacheCanvas及其属性的类。有关更多信息，请参阅BitmapCache。使用此选项可以控制、检查和更改缓存。在特殊情况下，这可能是修改后的或子类化的BitmapCache。 */
         bitmapCache: BitmapCache;
+        /** 如果缓存处于活动状态，则返回包含此显示对象图像的画布。有关详细信息，请参阅缓存。使用此选项显示缓存的结果。这将是一个HTMLCanvasElement，除非为此缓存特意启用了特殊的缓存规则。 */
         cacheCanvas: HTMLCanvasElement | Object;
+        /** 返回唯一标识此显示对象的当前缓存的ID号。这可用于确定自上次检查以来缓存是否已更改。 */
         cacheID: number;
+        /** 复合操作指示此显示对象的像素将如何与其后面的元素复合。如果为null，则此属性将从父容器继承。有关更多信息，请阅读关于合成的whatwg规范。有关支持的compositeOperation值的列表，请访问W3C关于Compositing和Blending的草案。 */
         compositeOperation: string;
+        /** 当用户将鼠标悬停在此显示对象上时,将显示相应的鼠标指针样式（例如“指针”、“帮助”、“文本”等），这类似与CSS的cursor */
         cursor: string;
+        /** 应用于此显示对象的滤镜对象数组。当显示对象上调用Cache或UpdateCache时滤镜将应用或者更新，并且仅应用于缓存的区域。 */
         filters: Filter[];
+        /**
+         * 在检查鼠标交互或调用getObjectsUnderPoint时，将会对hitArea指定的显示对象进行碰撞检测。将对hitArea对象相对于此显示对象的坐标空间应用其变换（就像hitArea对象是此显示对象及其regX/Y的子对象一样）。hitArea将仅使用其自己的alpha值进行碰撞检测，而不管目标显示对象上的alpha值或目标的祖先（父级）。
+         * 
+         * 如果在容器上设置，容器的子对象将不会收到鼠标事件。这类似于将MouseChildren设置为false。
+         * 
+         * 请注意，当前基类的hitTest()方法不使用hitArea，Stage也不支持hitArea。
+         */
         hitArea: DisplayObject;
         id: number;
         mask: Shape;
