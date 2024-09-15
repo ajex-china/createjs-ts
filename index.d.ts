@@ -683,13 +683,38 @@ declare namespace createjs {
         stage: Stage;
         /** 抑制在跨域内容中使用hitTest、鼠标事件和GetObjectsUnderPoint等功能时生成的错误。 */
         static suppressCrossDomainErrors: boolean;
+        /** 如果为false，则tick时钟将不会作用在此显示对象（或其子对象）上运行。这可以提供一些性能优势。除了阻止“tick”事件被分派外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite和MovieClip帧前进，以及DOMElement显示属性）。 */
         tickEnabled: boolean;
+        /** 如果非null，则定义此显示对象的变换矩阵，覆盖所有其他变换属性(x, y, rotation, scale, skew)。 */
         transformMatrix: Matrix2D;
+        /** 指示是否应将此显示对象绘制到画布上，并在运行Stage.getObjectsUnderPoint方法时将其包含在内。 */
         visible: boolean;
+        /** 显示对象相对于其父对象的x（水平）位置 */
         x: number;
+        /** 显示对象相对于其父对象的y（垂直）位置 */
         y: number;
 
         // methods
+        /** 
+         * 将显示对象绘制到新元素中，然后用于后续绘制。适用于不经常更改的复杂内容（例如，具有许多不移动的子项的容器，或复杂的矢量形状），这可以提供更快的渲染，因为内容不需要在每帧中重新渲染。缓存的显示对象可以自由移动、旋转、褪色等，但如果其内容发生变化，则必须再次调用updateCache()手动更新缓存。您必须通过x、y、w和h参数指定缓存区域。这定义了将使用此显示对象的坐标渲染和缓存的矩形。
+         * 
+         * 演示案例
+         * 例如你定义了一个圆形半径为25像素，坐标为(0, 0)：
+         * 
+         * 		var shape = new createjs.Shape();
+         * 		shape.graphics.beginFill("#ff0000").drawCircle(0, 0, 25);
+         * 		shape.cache(-25, -25, 50, 50);
+         * 
+         * 请注意，滤镜需要在应用缓存之前声明，否则您必须要在应用滤镜之后调用updateCache。查看Filter类以获取更多信息。某些滤镜（例如BlurFilter）可能无法与scale参数一起按预期工作。
+         * 通常，生成的cacheCanvas宽度和高度都应用了scale，但是一些过滤器（例如BlurFilter）会增加一些填充，这些填充可能不在缓存的区域。
+         * 在以前的版本中，缓存是在DisplayObject上处理的，但后来被转移到了BitmapCache。这允许更容易的交互和替代缓存方法，如WebGL和StageGL。有关选项对象的更多信息，请参阅BitmapCache定义。
+         * 
+         * @param x 缓存区域的x坐标原点。
+         * @param y 缓存区域的y坐标原点。
+         * @param width 缓存区域的宽度。
+         * @param height 缓存区域的高度。
+         * @param scale 缓存内容的缩放。例如，如果使用myShape.cache(0,0,100,100,2)缓存矢量形状，则生成的cacheCanvas将为200x200像素。这使您能够以更高的保真度缩放和旋转缓存元素。默认值为1。
+         */
         cache(x: number, y: number, width: number, height: number, scale?: number): void;
         clone(): DisplayObject;
         draw(ctx: CanvasRenderingContext2D, ignoreCache?: boolean): boolean;
