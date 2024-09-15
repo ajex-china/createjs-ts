@@ -646,22 +646,42 @@ declare namespace createjs {
          * 请注意，当前基类的hitTest()方法不使用hitArea，Stage也不支持hitArea。
          */
         hitArea: DisplayObject;
+        /** 此显示对象的唯一ID。方便扩展其他用途用途。 */
         id: number;
+        /** 为该显示对象定义矢量遮罩（剪裁路径）的Shape实例。形状的变换将相对于显示对象的父坐标应用（就像它是父坐标的子坐标一样）。 */
         mask: Shape;
+        /** 
+         * 指示在运行鼠标交互时是否包含此对象。将容器的子级设置为false将导致单击该子级时容器上的事件不会触发。将此属性设置为false不会阻止getObjectsUnderPoint方法返回子对象。
+         * 注意：在EaselJS 0.7.0中，mouseEnabled属性在嵌套容器中无法正常工作。请查看GitHub上的最新NEXT版本，以获取已解决此问题的更新版本。该修复程序将在EaselJS的下一个版本中提供。
+         */
         mouseEnabled: boolean;
+        /** 此显示对象的可选名称。包含在toString中。可用于调试。 */
         name: string;
+        /** 对包含此显示对象的Container或Stage对象的引用，如果尚未添加到其中，则为null。 */
         parent: Container;
+        /** 此显示对象的注册点的左偏移量。例如，要使100x100px位图围绕其中心旋转，您可以将regX和regY设置为50。缓存对象的注册点应根据预缓存条件设置，而不是缓存大小。 */
         regX: number;
+        /** 此显示对象的注册点的y偏移。例如，要使100x100px位图围绕其中心旋转，您可以将regX和regY设置为50。缓存对象的注册点应根据预缓存条件设置，而不是缓存大小。 */
         regY: number;
+        /** 此显示对象的旋转度。 */
         rotation: number;
+        /** 水平拉伸此显示对象的因素。例如，将scaleX设置为2会将显示对象拉伸到其标称宽度的两倍。要水平翻转对象，请将比例设置为负数。 */
         scaleX: number;
+        /** 垂直拉伸此显示对象的因素。例如，将scaleY设置为0.5会将显示对象拉伸到其标称高度的一半。要垂直翻转对象，请将比例设置为负数。 */
         scaleY: number;
+        /** 将scaleX和scaleY属性设置为相同的值。请注意，当您获得该值时，如果scaleX和scaleY是不同的值，它将只返回scaleX。 */
         scale: number;
+        /** 定义要在此显示对象上渲染的阴影的阴影对象。设置为null以删除阴影。如果为null，则此属性从父容器继承。 */
         shadow: Shadow;
+        /** 水平倾斜此显示对象的因素。 */
         skewX: number;
+        /** 垂直倾斜此显示对象的因素。 */
         skewY: number;
+        /** 指示当snapToPixelEnabled为true时，是否应将显示对象绘制为整个像素。要启用/禁用对整个类别的显示对象的捕捉，请在原型上设置此值（例如Text.prototype.snapToPixel=true）。 */
         snapToPixel: boolean;
+        /** 返回此显示对象将在其上呈现的Stage实例，如果尚未将其添加到Stage实例中，则返回null。 */
         stage: Stage;
+        /** 抑制在跨域内容中使用hitTest、鼠标事件和GetObjectsUnderPoint等功能时生成的错误。 */
         static suppressCrossDomainErrors: boolean;
         tickEnabled: boolean;
         transformMatrix: Matrix2D;
