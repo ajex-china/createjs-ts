@@ -716,10 +716,58 @@ declare namespace createjs {
          * @param scale 缓存内容的缩放。例如，如果使用myShape.cache(0,0,100,100,2)缓存矢量形状，则生成的cacheCanvas将为200x200像素。这使您能够以更高的保真度缩放和旋转缓存元素。默认值为1。
          */
         cache(x: number, y: number, width: number, height: number, scale?: number): void;
+        /**
+         * 返回此DisplayObject的克隆。克隆体的某些属性将恢复为默认值（例如.parent）。缓存不会跨克隆进行维护，某些元素会通过引用进行复制（遮罩、单个滤镜实例、hit area）。
+         * @returns {DisplayObject} 当前DisplayObject实例的克隆。
+         */
         clone(): DisplayObject;
+        /**
+         * 将显示对象绘制到指定的上下文中，忽略其可见、alpha、投影和变换。如果处理了绘图，则返回true（对于覆盖功能很有用）。
+         * 
+         * 注意：此方法主要用于内部使用，但可能对高级用途有用。
+         * @param ctx 要绘制的画布2D上下文对象。
+         * @param ignoreCache 指示绘图操作是否应忽略任何当前缓存。例如，用于绘制缓存（以防止它简单地将现有缓存绘制回自身）。
+         */
         draw(ctx: CanvasRenderingContext2D, ignoreCache?: boolean): boolean;
+        /**
+         * 返回一个矩形，该矩形表示该对象在其局部坐标系中的边界（即无变换）。已缓存的对象将返回缓存的边界。
+         * 
+         * 并非所有显示对象都可以计算自己的边界（例如形状）。对于这些对象，可以使用 setBounds，以便在计算容器边界时包含它们。
+         * 
+         * 1.All        所有显示对象都支持使用setBounds()手动设置边界。同样，使用cache()缓存的显示对象将返回其缓存的边界。手动和缓存边界将覆盖下面列出的自动计算。
+         * 2.Bitmap     返回Bitmap/sourceRect（如果指定）或图像的宽度和高度，从（x=0，y=0）开始延伸。
+         * 3.Sprite     返回当前帧的边界。如果在spritesheet数据中指定了帧注册点，则x/y可能为非零。另请参见getFrameBounds
+         * 4.Container  返回从getBounds()返回非空值的所有子级的聚合（组合）边界。
+         * 5.Shape      当前不支持自动边界计算。使用setBounds()手动定义边界。
+         * 6.Text       返回近似边界。水平值（x/宽度）非常准确，但垂直值（y/高度）则不准确，尤其是在使用textBaseline值而不是“top”时。
+         * 7.BitmapText 返回近似边界。如果spritesheet帧注册点接近（x=0，y=0），则值将更准确。
+         * 
+         * 对于某些对象（例如文本或具有许多子对象的容器），计算边界可能很消耗性能，每次调用getBounds（）时都会重新计算边界。通过显式设置边界，可以防止对静态对象进行重新计算：
+         * 
+         * 		var bounds = obj.getBounds();
+         * 		obj.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+         * 		// getBounds will now use the set values, instead of recalculating
+         * 
+         * 为了减少内存影响，返回的Rectangle实例可以在内部重用；克隆实例或复制其值（如果需要保留）。
+         * 
+         * 		var myBounds = obj.getBounds().clone();
+         * 		// OR:
+         * 		myRect.copy(obj.getBounds());
+         * 
+         * @returns {Rectangle} 显示对象的矩形边界，如果此对象没有边界，则为null。
+         */
         getBounds(): Rectangle;
+        /**
+         * 返回缓存的数据URL，如果未缓存此显示对象，则返回null。仅当缓存已更改时生成，否则返回最后一个结果。
+         * 
+         * @returns {string} 缓存的图像数据url。
+         */
         getCacheDataURL(): string;
+        /**
+         * 生成一个DisplayProps对象，表示对象及其所有父容器的组合显示属性，直到最高级别的祖先（通常是Stage）。
+         * @param props 一个DisplayProps对象，用于填充计算值。如果为null，则返回一个新的DisplayProps对象。
+         * @returns {DisplayProps} 包含显示属性的DisplayProps对象。
+         */
         getConcatenatedDisplayProps(props?: DisplayProps): DisplayProps;
         getConcatenatedMatrix(mtx?: Matrix2D): Matrix2D;
         getMatrix(matrix?: Matrix2D): Matrix2D;
