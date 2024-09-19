@@ -769,13 +769,48 @@ declare namespace createjs {
          * @returns {DisplayProps} 包含显示属性的DisplayProps对象。
          */
         getConcatenatedDisplayProps(props?: DisplayProps): DisplayProps;
+        /**
+         * 生成一个Matrix2D对象，表示显示对象及其所有父容器到最高级别祖先（通常是Stage）的组合变换。这可用于在坐标空间之间转换位置，例如使用localToGlobal和globalToLocal。
+         * @param mtx 用计算值填充的Matrix2D对象。如果为null，则返回一个新的Matrix2D对象。
+         */
         getConcatenatedMatrix(mtx?: Matrix2D): Matrix2D;
+        /**
+         * 基于此对象的当前变换返回一个矩阵。
+         * @param matrix 可选。用计算值填充的Matrix2D对象。如果为null，则返回一个新的Matrix对象。
+         * @returns {Matrix2D} 表示此显示对象变换的矩阵。
+         */
         getMatrix(matrix?: Matrix2D): Matrix2D;
         /**
          * @deprecated
+         * 请改用stage属性。
          */
         getStage(): Stage;
+        /**
+         * 返回一个矩形，表示该对象在其父坐标系中的边界（即应用了变换）。已缓存的对象将返回缓存的转换边界。
+         * 
+         * 并非所有显示对象都可以计算自己的边界（例如Shape）。对于这些对象，可以使用setBounds，以便在计算容器边界时包含它们。
+         * 
+         * 为了减少内存影响，返回的Rectangle实例可以在内部重用；克隆实例或复制其值（如果需要保留）。
+         * 
+         * 容器实例计算所有通过getBounds返回边界的子级的聚合边界。
+         * @returns {Rectangle} 表示边界的Rectangle实例，如果此对象没有边界，则为null。
+         */
         getTransformedBounds(): Rectangle;
+        /**
+         * 将指定的x和y位置从全局（舞台）坐标空间转换到显示对象的坐标空间。例如，这可用于确定显示对象内的当前鼠标位置。返回一个Point实例，其x和y属性与显示对象坐标空间中的变换位置相关。
+         * 
+         * 案例
+         * 
+         * 		displayObject.x = 300;
+         * 		displayObject.y = 200;
+         * 		stage.addChild(displayObject);
+         * 		var point = displayObject.globalToLocal(100, 100);
+         * 		// Results in x=-200, y=-100
+         * 
+         * @param x 要变换的舞台上的x位置。
+         * @param y 舞台上的y位置要变换。
+         * @param pt 将结果复制到其中的对象。如果省略，将返回一个具有x/y属性的新Point对象。
+         */
         globalToLocal(x: number, y: number, pt?: Point | Object): Point;
         hitTest(x: number, y: number): boolean;
         isVisible(): boolean;
