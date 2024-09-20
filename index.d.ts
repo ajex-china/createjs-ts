@@ -1429,10 +1429,25 @@ declare namespace createjs {
          */
         getAnimation(name: string): SpriteSheetAnimation;
         /**
-         * @deprecated - use the 'animations' property instead
+         * @deprecated - 已弃用，使用'animations'属性代替
          */
         getAnimations(): string[];
+        /**
+         * 返回指定图像和指定帧的源矩形的对象。改对象具有如下属性：
+         * 
+         * 1.图像属性，保存对其中找到帧的图像对象的引用
+         * 
+         * 2.rect属性包含一个Rectangle实例，该实例定义了该图像中帧的边界。
+         * 
+         * 3.与帧的regX/Y值对应的regX和regY属性。
+         * @param frameIndex 帧索引。
+         */
         getFrame(frameIndex: number): SpriteSheetFrame;
+        /**
+         * 返回一个矩形实例，定义指定帧相对于原点的边界。例如，一个regX为50、regY为40的90 x 70帧将返回：
+         * @param frameIndex 
+         * @param rectangle 
+         */
         getFrameBounds(frameIndex: number, rectangle?: Rectangle): Rectangle;
         getNumFrames(animation: string): number;
     }
