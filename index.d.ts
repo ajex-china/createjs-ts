@@ -617,56 +617,200 @@ declare namespace createjs {
         swapChildren(child1: DisplayObject, child2: DisplayObject): void;
         swapChildrenAt(index1: number, index2: number): void;
     }
-
+    /**
+     * DisplayObject是一个抽象类，不能直接构建的。子类可以构建，如Container、Bitmap和Shape。DisplayObject是EaselJS库中所有显示类的基类。它定义了所有显示对象之间共享的核心属性和方法，如转换属性（x、y、scaleX、scaleY等）、缓存和鼠标处理程序。
+     */
     export class DisplayObject extends EventDispatcher {
         constructor();
 
         // properties
+        /** 此显示对象的alpha（透明度）。0是完全透明的，1是完全不透明的。 */
         alpha: number;
+        /** 如果已创建缓存，则返回管理cacheCanvas及其属性的类。有关更多信息，请参阅BitmapCache。使用此选项可以控制、检查和更改缓存。在特殊情况下，这可能是修改后的或子类化的BitmapCache。 */
         bitmapCache: BitmapCache;
+        /** 如果缓存处于活动状态，则返回包含此显示对象图像的画布。有关详细信息，请参阅缓存。使用此选项显示缓存的结果。这将是一个HTMLCanvasElement，除非为此缓存特意启用了特殊的缓存规则。 */
         cacheCanvas: HTMLCanvasElement | Object;
+        /** 返回唯一标识此显示对象的当前缓存的ID号。这可用于确定自上次检查以来缓存是否已更改。 */
         cacheID: number;
+        /** 复合操作指示此显示对象的像素将如何与其后面的元素复合。如果为null，则此属性将从父容器继承。有关更多信息，请阅读关于合成的whatwg规范。有关支持的compositeOperation值的列表，请访问W3C关于Compositing和Blending的草案。 */
         compositeOperation: string;
+        /** 当用户将鼠标悬停在此显示对象上时,将显示相应的鼠标指针样式（例如“指针”、“帮助”、“文本”等），这类似与CSS的cursor */
         cursor: string;
+        /** 应用于此显示对象的滤镜对象数组。当显示对象上调用Cache或UpdateCache时滤镜将应用或者更新，并且仅应用于缓存的区域。 */
         filters: Filter[];
+        /**
+         * 在检查鼠标交互或调用getObjectsUnderPoint时，将会对hitArea指定的显示对象进行碰撞检测。将对hitArea对象相对于此显示对象的坐标空间应用其变换（就像hitArea对象是此显示对象及其regX/Y的子对象一样）。hitArea将仅使用其自己的alpha值进行碰撞检测，而不管目标显示对象上的alpha值或目标的祖先（父级）。
+         * 
+         * 如果在容器上设置，容器的子对象将不会收到鼠标事件。这类似于将MouseChildren设置为false。
+         * 
+         * 请注意，当前基类的hitTest()方法不使用hitArea，Stage也不支持hitArea。
+         */
         hitArea: DisplayObject;
+        /** 此显示对象的唯一ID。方便扩展其他用途用途。 */
         id: number;
+        /** 为该显示对象定义矢量遮罩（剪裁路径）的Shape实例。形状的变换将相对于显示对象的父坐标应用（就像它是父坐标的子坐标一样）。 */
         mask: Shape;
+        /** 
+         * 指示在运行鼠标交互时是否包含此对象。将容器的子级设置为false将导致单击该子级时容器上的事件不会触发。将此属性设置为false不会阻止getObjectsUnderPoint方法返回子对象。
+         * 注意：在EaselJS 0.7.0中，mouseEnabled属性在嵌套容器中无法正常工作。请查看GitHub上的最新NEXT版本，以获取已解决此问题的更新版本。该修复程序将在EaselJS的下一个版本中提供。
+         */
         mouseEnabled: boolean;
+        /** 此显示对象的可选名称。包含在toString中。可用于调试。 */
         name: string;
+        /** 对包含此显示对象的Container或Stage对象的引用，如果尚未添加到其中，则为null。 */
         parent: Container;
+        /** 此显示对象的注册点的左偏移量。例如，要使100x100px位图围绕其中心旋转，您可以将regX和regY设置为50。缓存对象的注册点应根据预缓存条件设置，而不是缓存大小。 */
         regX: number;
+        /** 此显示对象的注册点的y偏移。例如，要使100x100px位图围绕其中心旋转，您可以将regX和regY设置为50。缓存对象的注册点应根据预缓存条件设置，而不是缓存大小。 */
         regY: number;
+        /** 此显示对象的旋转度。 */
         rotation: number;
+        /** 水平拉伸此显示对象的因素。例如，将scaleX设置为2会将显示对象拉伸到其标称宽度的两倍。要水平翻转对象，请将比例设置为负数。 */
         scaleX: number;
+        /** 垂直拉伸此显示对象的因素。例如，将scaleY设置为0.5会将显示对象拉伸到其标称高度的一半。要垂直翻转对象，请将比例设置为负数。 */
         scaleY: number;
+        /** 将scaleX和scaleY属性设置为相同的值。请注意，当您获得该值时，如果scaleX和scaleY是不同的值，它将只返回scaleX。 */
         scale: number;
+        /** 定义要在此显示对象上渲染的阴影的阴影对象。设置为null以删除阴影。如果为null，则此属性从父容器继承。 */
         shadow: Shadow;
+        /** 水平倾斜此显示对象的因素。 */
         skewX: number;
+        /** 垂直倾斜此显示对象的因素。 */
         skewY: number;
+        /** 指示当snapToPixelEnabled为true时，是否应将显示对象绘制为整个像素。要启用/禁用对整个类别的显示对象的捕捉，请在原型上设置此值（例如Text.prototype.snapToPixel=true）。 */
         snapToPixel: boolean;
+        /** 返回此显示对象将在其上呈现的Stage实例，如果尚未将其添加到Stage实例中，则返回null。 */
         stage: Stage;
+        /** 抑制在跨域内容中使用hitTest、鼠标事件和GetObjectsUnderPoint等功能时生成的错误。 */
         static suppressCrossDomainErrors: boolean;
+        /** 如果为false，则tick时钟将不会作用在此显示对象（或其子对象）上运行。这可以提供一些性能优势。除了阻止“tick”事件被分派外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite和MovieClip帧前进，以及DOMElement显示属性）。 */
         tickEnabled: boolean;
+        /** 如果非null，则定义此显示对象的变换矩阵，覆盖所有其他变换属性(x, y, rotation, scale, skew)。 */
         transformMatrix: Matrix2D;
+        /** 指示是否应将此显示对象绘制到画布上，并在运行Stage.getObjectsUnderPoint方法时将其包含在内。 */
         visible: boolean;
+        /** 显示对象相对于其父对象的x（水平）位置 */
         x: number;
+        /** 显示对象相对于其父对象的y（垂直）位置 */
         y: number;
 
         // methods
+        /** 
+         * 将显示对象绘制到新元素中，然后用于后续绘制。适用于不经常更改的复杂内容（例如，具有许多不移动的子项的容器，或复杂的矢量形状），这可以提供更快的渲染，因为内容不需要在每帧中重新渲染。缓存的显示对象可以自由移动、旋转、褪色等，但如果其内容发生变化，则必须再次调用updateCache()手动更新缓存。您必须通过x、y、w和h参数指定缓存区域。这定义了将使用此显示对象的坐标渲染和缓存的矩形。
+         * 
+         * 演示案例
+         * 例如你定义了一个圆形半径为25像素，坐标为(0, 0)：
+         * 
+         * 		var shape = new createjs.Shape();
+         * 		shape.graphics.beginFill("#ff0000").drawCircle(0, 0, 25);
+         * 		shape.cache(-25, -25, 50, 50);
+         * 
+         * 请注意，滤镜需要在应用缓存之前声明，否则您必须要在应用滤镜之后调用updateCache。查看Filter类以获取更多信息。某些滤镜（例如BlurFilter）可能无法与scale参数一起按预期工作。
+         * 通常，生成的cacheCanvas宽度和高度都应用了scale，但是一些过滤器（例如BlurFilter）会增加一些填充，这些填充可能不在缓存的区域。
+         * 在以前的版本中，缓存是在DisplayObject上处理的，但后来被转移到了BitmapCache。这允许更容易的交互和替代缓存方法，如WebGL和StageGL。有关选项对象的更多信息，请参阅BitmapCache定义。
+         * 
+         * @param x 缓存区域的x坐标原点。
+         * @param y 缓存区域的y坐标原点。
+         * @param width 缓存区域的宽度。
+         * @param height 缓存区域的高度。
+         * @param scale 缓存内容的缩放。例如，如果使用myShape.cache(0,0,100,100,2)缓存矢量形状，则生成的cacheCanvas将为200x200像素。这使您能够以更高的保真度缩放和旋转缓存元素。默认值为1。
+         */
         cache(x: number, y: number, width: number, height: number, scale?: number): void;
+        /**
+         * 返回此DisplayObject的克隆。克隆体的某些属性将恢复为默认值（例如.parent）。缓存不会跨克隆进行维护，某些元素会通过引用进行复制（遮罩、单个滤镜实例、hit area）。
+         * @returns {DisplayObject} 当前DisplayObject实例的克隆。
+         */
         clone(): DisplayObject;
+        /**
+         * 将显示对象绘制到指定的上下文中，忽略其可见、alpha、投影和变换。如果处理了绘图，则返回true（对于覆盖功能很有用）。
+         * 
+         * 注意：此方法主要用于内部使用，但可能对高级用途有用。
+         * @param ctx 要绘制的画布2D上下文对象。
+         * @param ignoreCache 指示绘图操作是否应忽略任何当前缓存。例如，用于绘制缓存（以防止它简单地将现有缓存绘制回自身）。
+         */
         draw(ctx: CanvasRenderingContext2D, ignoreCache?: boolean): boolean;
+        /**
+         * 返回一个矩形，该矩形表示该对象在其局部坐标系中的边界（即无变换）。已缓存的对象将返回缓存的边界。
+         * 
+         * 并非所有显示对象都可以计算自己的边界（例如形状）。对于这些对象，可以使用 setBounds，以便在计算容器边界时包含它们。
+         * 
+         * 1.All        所有显示对象都支持使用setBounds()手动设置边界。同样，使用cache()缓存的显示对象将返回其缓存的边界。手动和缓存边界将覆盖下面列出的自动计算。
+         * 2.Bitmap     返回Bitmap/sourceRect（如果指定）或图像的宽度和高度，从（x=0，y=0）开始延伸。
+         * 3.Sprite     返回当前帧的边界。如果在spritesheet数据中指定了帧注册点，则x/y可能为非零。另请参见getFrameBounds
+         * 4.Container  返回从getBounds()返回非空值的所有子级的聚合（组合）边界。
+         * 5.Shape      当前不支持自动边界计算。使用setBounds()手动定义边界。
+         * 6.Text       返回近似边界。水平值（x/宽度）非常准确，但垂直值（y/高度）则不准确，尤其是在使用textBaseline值而不是“top”时。
+         * 7.BitmapText 返回近似边界。如果spritesheet帧注册点接近（x=0，y=0），则值将更准确。
+         * 
+         * 对于某些对象（例如文本或具有许多子对象的容器），计算边界可能很消耗性能，每次调用getBounds（）时都会重新计算边界。通过显式设置边界，可以防止对静态对象进行重新计算：
+         * 
+         * 		var bounds = obj.getBounds();
+         * 		obj.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+         * 		// getBounds will now use the set values, instead of recalculating
+         * 
+         * 为了减少内存影响，返回的Rectangle实例可以在内部重用；克隆实例或复制其值（如果需要保留）。
+         * 
+         * 		var myBounds = obj.getBounds().clone();
+         * 		// OR:
+         * 		myRect.copy(obj.getBounds());
+         * 
+         * @returns {Rectangle} 显示对象的矩形边界，如果此对象没有边界，则为null。
+         */
         getBounds(): Rectangle;
+        /**
+         * 返回缓存的数据URL，如果未缓存此显示对象，则返回null。仅当缓存已更改时生成，否则返回最后一个结果。
+         * 
+         * @returns {string} 缓存的图像数据url。
+         */
         getCacheDataURL(): string;
+        /**
+         * 生成一个DisplayProps对象，表示对象及其所有父容器的组合显示属性，直到最高级别的祖先（通常是Stage）。
+         * @param props 一个DisplayProps对象，用于填充计算值。如果为null，则返回一个新的DisplayProps对象。
+         * @returns {DisplayProps} 包含显示属性的DisplayProps对象。
+         */
         getConcatenatedDisplayProps(props?: DisplayProps): DisplayProps;
+        /**
+         * 生成一个Matrix2D对象，表示显示对象及其所有父容器到最高级别祖先（通常是Stage）的组合变换。这可用于在坐标空间之间转换位置，例如使用localToGlobal和globalToLocal。
+         * @param mtx 用计算值填充的Matrix2D对象。如果为null，则返回一个新的Matrix2D对象。
+         */
         getConcatenatedMatrix(mtx?: Matrix2D): Matrix2D;
+        /**
+         * 基于此对象的当前变换返回一个矩阵。
+         * @param matrix 可选。用计算值填充的Matrix2D对象。如果为null，则返回一个新的Matrix对象。
+         * @returns {Matrix2D} 表示此显示对象变换的矩阵。
+         */
         getMatrix(matrix?: Matrix2D): Matrix2D;
         /**
          * @deprecated
+         * 请改用stage属性。
          */
         getStage(): Stage;
+        /**
+         * 返回一个矩形，表示该对象在其父坐标系中的边界（即应用了变换）。已缓存的对象将返回缓存的转换边界。
+         * 
+         * 并非所有显示对象都可以计算自己的边界（例如Shape）。对于这些对象，可以使用setBounds，以便在计算容器边界时包含它们。
+         * 
+         * 为了减少内存影响，返回的Rectangle实例可以在内部重用；克隆实例或复制其值（如果需要保留）。
+         * 
+         * 容器实例计算所有通过getBounds返回边界的子级的聚合边界。
+         * @returns {Rectangle} 表示边界的Rectangle实例，如果此对象没有边界，则为null。
+         */
         getTransformedBounds(): Rectangle;
+        /**
+         * 将指定的x和y位置从全局（舞台）坐标空间转换到显示对象的坐标空间。例如，这可用于确定显示对象内的当前鼠标位置。返回一个Point实例，其x和y属性与显示对象坐标空间中的变换位置相关。
+         * 
+         * 案例
+         * 
+         * 		displayObject.x = 300;
+         * 		displayObject.y = 200;
+         * 		stage.addChild(displayObject);
+         * 		var point = displayObject.globalToLocal(100, 100);
+         * 		// Results in x=-200, y=-100
+         * 
+         * @param x 要变换的舞台上的x位置。
+         * @param y 舞台上的y位置要变换。
+         * @param pt 将结果复制到其中的对象。如果省略，将返回一个具有x/y属性的新Point对象。
+         */
         globalToLocal(x: number, y: number, pt?: Point | Object): Point;
         hitTest(x: number, y: number): boolean;
         isVisible(): boolean;
