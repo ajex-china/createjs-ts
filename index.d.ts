@@ -833,9 +833,33 @@ declare namespace createjs {
          * @param height 
          */
         setBounds(x: number, y: number, width: number, height: number): void;
+        /**
+         * 用于快速设置显示对象上的变换属性。所有参数都是可选的。省略的参数将设置默认值。
+         * @param x 
+         * @param y 
+         * @param scaleX 
+         * @param scaleY 
+         * @param rotation 旋转，单位为度，默认为0度。
+         * @param skewX 水平倾斜系数
+         * @param skewY 垂直倾斜系数
+         * @param regX 水平注册点
+         * @param regY 垂直注册点
+         * @returns {DisplayObject} 当前DisplayObject实例的克隆。
+         */
         setTransform(x?: number, y?: number, scaleX?: number, scaleY?: number, rotation?: number, skewX?: number, skewY?: number, regX?: number, regY?: number): DisplayObject;
+        /**
+         * 清除当前的缓存。详情请查看cache。
+         */
         uncache(): void;
+        /**
+         * 更新显示对象缓存，在没有激活缓存的情况下，调用updateCache将抛出错误。如果compositeOperation为空，则在绘图之前将清除当前缓存。
+         * @param compositeOperation 合成操作。
+         */
         updateCache(compositeOperation?: string): void;
+        /**
+         * 将此显示对象的变换、alpha、globalCompositeOperation、剪裁路径（遮罩）和阴影应用于指定的上下文。这通常称为绘制前。
+         * @param ctx {CanvasRenderingContext2D} The canvas 2D to update.
+         */
         updateContext(ctx: CanvasRenderingContext2D): void;
     }
     /**
