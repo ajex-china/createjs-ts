@@ -608,6 +608,12 @@ declare namespace createjs {
          */
         getNumChildren(): number;
         getObjectsUnderPoint(x: number, y: number, mode: number): DisplayObject[];
+        /**
+         * 与getObjectsUnderPoint功能相似，但仅返回最上层的显示对象。该方法执行效率比getObjectsUnderPoint高。但性能开销仍然不少，详情查看getObjectsUnderPoint的注释。
+         * @param x 
+         * @param y 
+         * @param mode 匹配模式，0为所有、1为启用鼠标交互的、2为启用鼠标交互且不透明的对象。
+         */
         getObjectUnderPoint(x: number, y: number, mode: number): DisplayObject;
         removeAllChildren(): void;
         removeChild(...child: DisplayObject[]): boolean;
