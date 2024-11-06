@@ -115,8 +115,8 @@ declare namespace createjs {
         off<T extends Event = Event>(type: string, listener: Function|((eventObj?: T)=>void), useCapture?: boolean): void;
         /**
          * 一种使用addEventListener的快捷方法，可以更容易地指定执行范围，使侦听器只运行一次，将任意数据与侦听器相关联，并删除侦听器。
-此方法通过创建匿名包装器函数并使用addEventListener订阅它来工作。返回包装器函数以与removeEventListener一起使用（或关闭）。
-重要提示：要删除添加了on的侦听器，您必须将返回的包装器函数作为侦听器传递，或使用remove。同样，每次调用NEW包装器函数时，都会订阅，因此使用相同参数对on的多次调用将创建多个侦听器。
+         * 此方法通过创建匿名包装器函数并使用addEventListener订阅它来工作。返回包装器函数以与removeEventListener一起使用（或关闭）。
+         * 重要提示：要删除添加了on的侦听器，您必须将返回的包装器函数作为侦听器传递，或使用remove。同样，每次调用NEW包装器函数时，都会订阅，因此使用相同参数对on的多次调用将创建多个侦听器。
          * 
          *Example
          * 
@@ -608,6 +608,12 @@ declare namespace createjs {
          */
         getNumChildren(): number;
         getObjectsUnderPoint(x: number, y: number, mode: number): DisplayObject[];
+        /**
+         * 与getObjectsUnderPoint功能相似，但仅返回最上层的显示对象。该方法执行效率比getObjectsUnderPoint高。但性能开销仍然不少，详情查看getObjectsUnderPoint的注释。
+         * @param x 
+         * @param y 
+         * @param mode 匹配模式，0为所有、1为启用鼠标交互的、2为启用鼠标交互且不透明的对象。
+         */
         getObjectUnderPoint(x: number, y: number, mode: number): DisplayObject;
         removeAllChildren(): void;
         removeChild(...child: DisplayObject[]): boolean;
@@ -838,9 +844,33 @@ declare namespace createjs {
          * @param height 
          */
         setBounds(x: number, y: number, width: number, height: number): void;
+        /**
+         * 用于快速设置显示对象上的变换属性。所有参数都是可选的。省略的参数将设置默认值。
+         * @param x 
+         * @param y 
+         * @param scaleX 
+         * @param scaleY 
+         * @param rotation 旋转，单位为度，默认为0度。
+         * @param skewX 水平倾斜系数
+         * @param skewY 垂直倾斜系数
+         * @param regX 水平注册点
+         * @param regY 垂直注册点
+         * @returns {DisplayObject} 当前DisplayObject实例的克隆。
+         */
         setTransform(x?: number, y?: number, scaleX?: number, scaleY?: number, rotation?: number, skewX?: number, skewY?: number, regX?: number, regY?: number): DisplayObject;
+        /**
+         * 清除当前的缓存。详情请查看cache。
+         */
         uncache(): void;
+        /**
+         * 更新显示对象缓存，在没有激活缓存的情况下，调用updateCache将抛出错误。如果compositeOperation为空，则在绘图之前将清除当前缓存。
+         * @param compositeOperation 合成操作。
+         */
         updateCache(compositeOperation?: string): void;
+        /**
+         * 将此显示对象的变换、alpha、globalCompositeOperation、剪裁路径（遮罩）和阴影应用于指定的上下文。这通常称为绘制前。
+         * @param ctx {CanvasRenderingContext2D} The canvas 2D to update.
+         */
         updateContext(ctx: CanvasRenderingContext2D): void;
     }
     /**
