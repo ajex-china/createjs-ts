@@ -825,20 +825,49 @@ declare namespace createjs {
         globalToLocal(x: number, y: number, pt?: Point | Object): Point;
         /**
          * 检测显示对象是否与本地坐标中的指定点相交（即在指定位置绘制一个alpha>0的像素）。这将忽略显示对象的alpha、shadow、hitArea、mask和compositeOperation。
+         * 
+         * 案例
+         * 
+         * 		stage.addEventListener("stagemousedown", handleMouseDown);
+         * 		function handleMouseDown(event) {
+         * 			var hit = myShape.hitTest(event.stageX, event.stageY);
+         * 		}
+         * 
+         * 请注意，EaselJS目前不支持形状到形状的碰撞。
          * @param x 
          * @param y 
          */
         hitTest(x: number, y: number): boolean;
-        isVisible(): boolean;
+        /**
+         * 返回true或false，指示如果绘制到画布上，显示对象是否可见。这并不能说明它是否在舞台边界内可见。
+         * 
+         * 注意：此方法主要用于内部使用，但可能对高级用途有用。
+         * 
+         * @returns {boolean} 布尔值，指示如果绘制到画布上，显示对象是否可见。
+         */
+        protected isVisible(): boolean;
         /**
          * 将指定的x和y位置从显示对象的本地坐标空间转换到全局（舞台）坐标空间。
+         * 
          * 例如，这可用于将HTML标签定位在嵌套显示对象上的特定点上。返回一个Point实例，其x和y属性与舞台上的变换坐标相关。
+         * 
          * 注意：如果舞台有设置缩放的话，需要自己计算缩放。例如返回的Point实例是p，则实际的坐标是(p.x/stage.scaleX,p.y/stage.scaleY)。
          * @param x 
          * @param y 
          * @param pt 
          */
         localToGlobal(x: number, y: number, pt?: Point | Object): Point;
+        /**
+         * 将指定的x和y位置从该显示对象的坐标空间转换到目标显示对象的坐标空间。返回一个Point实例，其x和y属性与目标坐标空间中的变换位置相关。与使用以下代码处理localToGlobal和globalToLocal的效果相同。
+         * 
+         * 		var pt = this.localToGlobal(x, y);
+         * 		pt = target.globalToLocal(pt.x, pt.y);
+         * 
+         * @param x 
+         * @param y 
+         * @param target 
+         * @param pt 
+         */
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
         set(props: Object): DisplayObject;
         /**
