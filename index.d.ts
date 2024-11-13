@@ -823,6 +823,11 @@ declare namespace createjs {
          * @param pt 将结果复制到其中的对象。如果省略，将返回一个具有x/y属性的新Point对象。
          */
         globalToLocal(x: number, y: number, pt?: Point | Object): Point;
+        /**
+         * 检测显示对象是否与本地坐标中的指定点相交（即在指定位置绘制一个alpha>0的像素）。这将忽略显示对象的alpha、shadow、hitArea、mask和compositeOperation。
+         * @param x 
+         * @param y 
+         */
         hitTest(x: number, y: number): boolean;
         isVisible(): boolean;
         /**
