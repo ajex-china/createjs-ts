@@ -993,11 +993,38 @@ declare namespace createjs {
         constructor();
 
         // properties
+        /** Base64字符到值的映射。由decodePath使用。 */
         static BASE_64: Object;
+        /** Graphics的可重用实例。BeginPath可避免不必要的实例化。 */
         static beginCmd: Graphics.BeginPath;
+        /** 
+         * 保存对创建或附加的最后一个命令的引用。例如，您可以保留对Fill命令的引用，以便稍后使用以下命令动态更新颜色：
+         * 
+         *     var myFill = myGraphics.beginFill("red").command;
+         *     // update color later:
+         *     myFill.style = "yellow";
+         * 
+         */
         command: Object;
+        /** 
+         * 返回图形指令数组。每个条目都是一个图形命令对象（例如graphics.Fill、graphics.Rect）。不建议直接修改返回的数组，这可能会导致意外行为。
+         * 
+         * 此属性主要用于指令的自检（例如用于图形导出）。
+         */
         instructions: Object[]; // array of graphics command objects (Graphics.Fill, etc)
+        /** 
+         * 将setStrokeStyle的caps参数的数值映射到相应的字符串值。这主要用于小型API。映射如下：0到“对接”，1到“圆形”，2到“方形”。例如，要将线条大写设置为“方形”：
+         * 
+         *     myGraphics.ss(16, 2);
+         * 
+         */
         static STROKE_CAPS_MAP: string[];
+        /** 
+         * 将setStrokeStyle的关节参数的数值映射到相应的字符串值。这主要用于小型API。映射如下：0到“斜接”，1到“圆形”，2到“斜面”。例如，要将线接头设置为“斜面”：
+         * 
+         *     myGraphics.ss(16, 0, 2);
+         * 
+         */
         static STROKE_JOINTS_MAP: string[];
 
         // methods
