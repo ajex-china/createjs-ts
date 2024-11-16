@@ -86,13 +86,13 @@ declare namespace createjs {
     /**
      * EventDispatcher提供了管理事件侦听器队列和分发事件的方法。
      * 
-     * 您可以扩展EventDispatcher，也可以使用EventDispatcher的initialize方法将其方法混合到现有的原型或实例中。
+     * 您可以扩展EventDispatcher，也可以使用EventDispatcher的{@link initialize}方法将其方法混合到现有的原型或实例中。
      * 
      * EventDispatcher与CreateJS Event类一起提供了一个基于DOM Level 2事件模型的扩展事件模型，包括addEventListener、removeEventListener和dispatchEvent。它支持冒泡/捕获、preventDefault, stopPropagation, stopImmediatePropagation和handleEvent。
      * 
-     * EventDispatcher还公开了一个on方法，这使得创建作用域监听器、只运行一次的监听器以及具有相关任意数据的监听器变得更加容易。off方法只是removeEventListener的别名。
+     * EventDispatcher还公开了一个{@link on}方法，这使得创建作用域监听器、只运行一次的监听器以及具有相关任意数据的监听器变得更加容易。{@link off}方法只是removeEventListener的别名。
      * 
-     * DOM Level 2模型的另一个补充是removeAllEventListener方法，该方法可用于所有事件的监听器，或特定事件的监听器。Event对象还包括一个remove方法，用于删除活动侦听器。
+     * DOM Level 2模型的另一个补充是{@link removeAllEventListener}方法，该方法可用于所有事件的监听器，或特定事件的监听器。Event对象还包括一个{@link remove}方法，用于删除活动侦听器。
      * 
      * Example
      * 
@@ -100,7 +100,7 @@ declare namespace createjs {
      * ```js
      * EventDispatcher.initialize(MyClass.prototype);
      * ```
-     * 添加事件（请参阅addEventListener）。
+     * 添加事件（请参阅{@link addEventListener}）。
      * ```js
      * instance.addEventListener("eventName", handlerMethod);
      * function handlerMethod(event) {
@@ -109,7 +109,7 @@ declare namespace createjs {
      * ```
      * 保持适当的范围
      * 
-     * Scope (ie. "this")对事件来说可能是一个挑战。使用on方法监听事件简化了这一过程。
+     * Scope (ie. "this")对事件来说可能是一个挑战。使用{@link on}方法监听事件简化了这一过程。
      * ```js
      * instance.addEventListener("click", function(event) {
      *     console.log(instance == this); // false, scope is ambiguous.
@@ -124,21 +124,29 @@ declare namespace createjs {
      * 浏览器支持CreateJS中的事件模型可以在任何项目中与套件分开使用，但是继承模型需要现代浏览器（IE9+）。
      */
     class EventDispatcher {
-        constructor();
-
+        constructor()
         // methods
         /**
+         * 添加指定的事件侦听器。请注意，向同一个对象添加多个监听器将导致多个监听器被触发。
          * 
-         * @param type 事件类型
-         * @param listener 监听器
-         * @param useCapture 是否冒泡
+         * @example
+         * ```js
+         * displayObject.addEventListener("click", handleClick);
+         * function handleClick(event) {
+         *     // Click happened.
+         * }
+         * ```
+         * @param type 事件的字符串类型。
+         * @param listener 具有handleEvent方法的对象，或在事件被分派时将被调用的函数。
+         * @param useCapture 对于冒泡的事件，指示是在捕获阶段还是冒泡/目标阶段监听事件。
+         * @returns 返回用于链接或赋值的侦听器。
          */
-        addEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): Function;
-        addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
-        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): Object;
-        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
-        addEventListener(type: string, listener: (e?:Event) => void, useCapture?: boolean): ()=>{}
-        addEventListener(type: string, listener: (e?:any) => void, useCapture?: boolean): ()=>{}
+        addEventListener(type: string, listener: (eventObj: Object) => void|boolean, useCapture?: boolean): Function|Object
+        //addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
+        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void|boolean}, useCapture?: boolean): Object
+        //addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
+        addEventListener(type: string, listener: (e?:Event|any) => void, useCapture?: boolean): ()=>{}
+        //addEventListener(type: string, listener: (e?:any) => void, useCapture?: boolean): ()=>{}
         /**
          * 将指定的事件分派给所有侦听器。
          * @param eventObj 具有“type”属性或字符串类型的对象。虽然通用对象可以工作，但建议使用CreateJS事件实例。如果使用了字符串，dispatchEvent将在必要时使用指定的类型构造一个Event实例。后一种方法可以用于避免可能没有任何侦听器的非冒泡事件的事件对象实例化。
@@ -150,6 +158,11 @@ declare namespace createjs {
         dispatchEvent(eventObj: string, target?: Object): boolean;
         dispatchEvent(eventObj: Event, target?: Object): boolean;
         hasEventListener(type: string): boolean;
+        /**
+         * 静态初始化方法，用于将EventDispatcher方法混合到目标对象或原型中。
+         * @param target 将EventDispatcher方法注入的目标对象。这可以是实例或原型。
+
+         */
         static initialize(target: Object): void;
         off(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
         off(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): void;
@@ -187,7 +200,7 @@ declare namespace createjs {
         on(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener: { handleEvent: (eventObj: Object) => void; }, scope?: Object, once?: boolean, data?: any, useCapture?: boolean): Object;
         on(type: string, listener:(eventObj: any)=>void, scope?: any, once?: boolean, data?: any, useCapture?: boolean):void;
-        on<T extends Event = Event>(type: string, listener: Function|((eventObj?: T)=>void), scope?: any, once?: boolean, data?: any, useCapture?: boolean):Function|((eventObj?: T)=>void);
+        on<T extends Event = Event>(type: string, listener: Function|((eventObj?: T)=>void|boolean), scope?: any, once?: boolean, data?: any, useCapture?: boolean):Function|((eventObj?: T)=>void);
         removeAllEventListeners(type?: string): void;
         removeEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
         removeEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): void;
