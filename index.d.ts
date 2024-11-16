@@ -14,7 +14,6 @@
 // Library documentation : http://www.createjs.com/Docs/PreloadJS/modules/PreloadJS.html
 // Library documentation : http://www.createjs.com/Docs/SoundJS/modules/SoundJS.html
 // Library documentation : http://www.createjs.com/Docs/TweenJS/modules/TweenJS.html
-export = createjs;
 
 
 interface NativeMouseEvent extends MouseEvent {
@@ -26,7 +25,7 @@ declare namespace createjs {
      * 包含所有事件共享的属性和方法，以便与EventDispatcher一起使用。
      * 请注意，事件对象经常被重用，因此您永远不应该依赖于事件对象在调用堆栈之外的状态。
      */
-    export class Event {
+    class Event {
         constructor(type?: string, bubbles?: boolean, cancelable?: boolean);
 
         // properties
@@ -84,11 +83,56 @@ declare namespace createjs {
         stopPropagation(): void;
         toString(): string;
     }
-
-    export class EventDispatcher {
+    /**
+     * EventDispatcher提供了管理事件侦听器队列和分发事件的方法。
+     * 
+     * 您可以扩展EventDispatcher，也可以使用EventDispatcher的initialize方法将其方法混合到现有的原型或实例中。
+     * 
+     * EventDispatcher与CreateJS Event类一起提供了一个基于DOM Level 2事件模型的扩展事件模型，包括addEventListener、removeEventListener和dispatchEvent。它支持冒泡/捕获、preventDefault, stopPropagation, stopImmediatePropagation和handleEvent。
+     * 
+     * EventDispatcher还公开了一个on方法，这使得创建作用域监听器、只运行一次的监听器以及具有相关任意数据的监听器变得更加容易。off方法只是removeEventListener的别名。
+     * 
+     * DOM Level 2模型的另一个补充是removeAllEventListener方法，该方法可用于所有事件的监听器，或特定事件的监听器。Event对象还包括一个remove方法，用于删除活动侦听器。
+     * 
+     * Example
+     * 
+     * 将EventDispatcher功能添加到“MyClass”类中。
+     * ```js
+     * EventDispatcher.initialize(MyClass.prototype);
+     * ```
+     * 添加事件（请参阅addEventListener）。
+     * ```js
+     * instance.addEventListener("eventName", handlerMethod);
+     * function handlerMethod(event) {
+     *     console.log(event.target + " Was Clicked");
+     * }
+     * ```
+     * 保持适当的范围
+     * 
+     * Scope (ie. "this")对事件来说可能是一个挑战。使用on方法监听事件简化了这一过程。
+     * ```js
+     * instance.addEventListener("click", function(event) {
+     *     console.log(instance == this); // false, scope is ambiguous.
+     * });
+     *
+     * instance.on("click", function(event) {
+     *     console.log(instance == this); // true, "on" uses dispatcher scope by default.
+     * });
+     * ```
+     * 如果你想使用addEventListener，你可能想使用function.bind()或类似的代理来管理作用域。
+     * 
+     * 浏览器支持CreateJS中的事件模型可以在任何项目中与套件分开使用，但是继承模型需要现代浏览器（IE9+）。
+     */
+    class EventDispatcher {
         constructor();
 
         // methods
+        /**
+         * 
+         * @param type 事件类型
+         * @param listener 监听器
+         * @param useCapture 是否冒泡
+         */
         addEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): Function;
         addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
         addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): Object;
@@ -118,19 +162,19 @@ declare namespace createjs {
          * 此方法通过创建匿名包装器函数并使用addEventListener订阅它来工作。返回包装器函数以与removeEventListener一起使用（或关闭）。
          * 重要提示：要删除添加了on的侦听器，您必须将返回的包装器函数作为侦听器传递，或使用remove。同样，每次调用NEW包装器函数时，都会订阅，因此使用相同参数对on的多次调用将创建多个侦听器。
          * 
-         *Example
-         * 
-         * 		var listener = myBtn.on("click", handleClick, null, false, {count:3});
-         * 		function handleClick(evt, data) {
-         * 			data.count -= 1;
-         * 			console.log(this == myBtn); // true - scope defaults to the dispatcher
-         * 			if (data.count == 0) {
-         * 				alert("clicked 3 times!");
-         * 				myBtn.off("click", listener);
-         * 				// alternately: evt.remove();
-         * 			}
-         * 		}
-         * 
+         * @example
+         * ```js
+         * var listener = myBtn.on("click", handleClick, null, false, {count:3});
+         * function handleClick(evt, data) {
+         *     data.count -= 1;
+         *     console.log(this == myBtn); // true - scope defaults to the dispatcher
+         *     if (data.count == 0) {
+         *         alert("clicked 3 times!");
+         *         myBtn.off("click", listener);
+         *         // alternately: evt.remove();
+         *     }
+         * }
+         * ```
          * @param type 事件类型
          * @param listener 侦听器
          * @param scope 执行侦听器的作用域。对于函数侦听器，默认为dispatcher/currentTarget，对于对象侦听器，则默认为侦听器本身（即使用handleEvent）。直白点说就是this指向谁，默认是指向侦听器自身。
@@ -188,7 +232,7 @@ declare namespace createjs {
      * 将灰度 Alpha 贴图图像（或画布）应用到目标，这样结果的 Alpha 通道将从贴图的红色通道复制，RGB 通道将从目标复制。
      * 通常，建议您使用AlphaMaskFilter，因为它的性能要好得多。
      */
-    export class AlphaMapFilter extends Filter {
+    class AlphaMapFilter extends Filter {
         constructor(alphaMap: HTMLImageElement | HTMLCanvasElement);
 
         // properties
@@ -204,7 +248,7 @@ declare namespace createjs {
     /**
      * 将遮罩图像（或画布）中的alpha应用于目标，这样结果的alpha通道将从遮罩中导出，而RGB通道将从目标中复制。例如，这可以用于将alpha掩码应用于显示对象。这也可以用于将JPG压缩的RGB图像与PNG32 alpha掩码组合，这可以导致比包含RGB的单个PNG32小得多的文件大小。
      */
-    export class AlphaMaskFilter extends Filter {
+    class AlphaMaskFilter extends Filter {
         constructor(mask: HTMLImageElement | HTMLCanvasElement);
 
         // properties
@@ -221,7 +265,7 @@ declare namespace createjs {
     /**
      * 位图表示显示列表中的图像、画布或视频。可以使用现有HTML元素或字符串实例化位图。
      */
-    export class Bitmap extends DisplayObject {
+    class Bitmap extends DisplayObject {
         constructor(imageOrUrl?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string);
 
         // properties
@@ -245,7 +289,7 @@ declare namespace createjs {
      * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将DisplayObject对象渲染为位图。实际缓存本身仍然与cacheCanvas一起存储在目标上。Bitmap对象执行缓存几乎没有好处，因为它已经是单个图像了。如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。缓存不会自动更新，除非调用cache方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
      * 缓存也是应用滤镜的必要条件。当滤镜不改变时，直接使用缓存显示，不需要每帧渲染。
      */
-    export class BitmapCache {
+    class BitmapCache {
         constructor();
 
         // properties
@@ -293,7 +337,7 @@ declare namespace createjs {
     /**
      * 对位图使用九宫格缩放
      */
-    export class ScaleBitmap extends DisplayObject {
+    class ScaleBitmap extends DisplayObject {
         /**
          * 
          * @param imageOrUrl 源图或者链接地址
@@ -332,7 +376,7 @@ declare namespace createjs {
      * 
      * 重要提示： 虽然BitmapText扩展了Container，但它并不是设计为一个容器。因此，addChild和removeChild等方法被禁用。
      */
-    export class BitmapText extends DisplayObject {
+    class BitmapText extends DisplayObject {
         /**
          * 
          * @param text 要显示的文本。
@@ -365,7 +409,7 @@ declare namespace createjs {
     /**
      * 将方框模糊应用于上下文2D中的DisplayObjects，并将高斯模糊应用于webgl中。请注意，此滤镜相当密集，尤其是当质量设置为高于1时。
      */
-    export class BlurFilter extends Filter {
+    class BlurFilter extends Filter {
         constructor(blurX?: number, blurY?: number, quality?: number)
 
         // properties
@@ -395,7 +439,7 @@ declare namespace createjs {
      * 		}
      * 
      */
-    export class ButtonHelper {
+    class ButtonHelper {
         /**
          * 
          * @param target 要管理的实例。
@@ -445,7 +489,7 @@ declare namespace createjs {
      * 
      * 有关应用滤镜的详细信息，请参见Filter。
      */
-    export class ColorFilter extends Filter {
+    class ColorFilter extends Filter {
         /**
          * 
          * @param redMultiplier 与红色通道相乘的量。这是一个介于0和1之间的范围。
@@ -489,7 +533,7 @@ declare namespace createjs {
      * 
      * 有关如何应用滤镜的示例，请参见Filter，或有关如何使用ColorMatrix更改DisplayObject颜色的示例，参见ColorMatrixFilter。
      */
-    export class ColorMatrix {
+    class ColorMatrix {
         constructor(brightness?: number, contrast?: number, saturation?: number, hue?: number);
 
         // methods
@@ -560,7 +604,7 @@ declare namespace createjs {
     /**
      * 允许您执行复杂的颜色操作，如修改饱和度、亮度或反转。有关更改颜色的详细信息，请参见ColorMatrix。为了更容易地进行颜色变换，请考虑ColorFilter。
      */
-    export class ColorMatrixFilter extends Filter {
+    class ColorMatrixFilter extends Filter {
         constructor(matrix: number[] | ColorMatrix);
 
         // properties
@@ -574,7 +618,7 @@ declare namespace createjs {
      * Container是一个可嵌套的显示列表，允许您使用复合显示元素。例如，可以将手臂、腿、躯干和头部位图实例组合到一个“人物容器”中，并将它们变换为一个组，同时仍然可以相对移动各个部分。容器的子级具有与其父级Container连接的transform和alpha属性。
      * 例如，放置在x=50且阿尔法=0.7的Container中的x=100且阿尔法=0.5的Shape将在x=150且阿尔法=0.35处渲染到画布上。容器有一些开销，所以通常不应该创建一个容器来容纳一个子容器。
      */
-    export class Container extends DisplayObject {
+    class Container extends DisplayObject {
         constructor();
 
         // properties
@@ -624,9 +668,13 @@ declare namespace createjs {
         swapChildrenAt(index1: number, index2: number): void;
     }
     /**
-     * DisplayObject是一个抽象类，不能直接构建的。子类可以构建，如Container、Bitmap和Shape。DisplayObject是EaselJS库中所有显示类的基类。它定义了所有显示对象之间共享的核心属性和方法，如转换属性（x、y、scaleX、scaleY等）、缓存和鼠标处理程序。
+     * DisplayObject是一个抽象类，不能直接构建的。子类可以构建，如Container、Bitmap和Shape。
+     * 
+     * DisplayObject是EaselJS库中所有显示类的基类。
+     * 
+     * 它定义了所有显示对象之间共享的核心属性和方法，如转换属性（x、y、scaleX、scaleY等）、缓存和鼠标处理程序。
      */
-    export class DisplayObject extends EventDispatcher {
+    class DisplayObject extends EventDispatcher {
         constructor();
 
         // properties
@@ -910,7 +958,7 @@ declare namespace createjs {
     /**
      * 用于计算和封装与显示相关的属性。
      */
-    export class DisplayProps {
+    class DisplayProps {
         constructor(visible?: number, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number);
 
         // properties
@@ -960,7 +1008,7 @@ declare namespace createjs {
     }
 
 
-    export class DOMElement extends DisplayObject {
+    class DOMElement extends DisplayObject {
         constructor(htmlElement: HTMLElement);
 
         // properties
@@ -973,13 +1021,13 @@ declare namespace createjs {
     }
 
 
-    export class EaselJS {
+    class EaselJS {
         // properties
         static buildDate: string;
         static version: string;
     }
 
-    export class Filter {
+    class Filter {
         constructor();
 
         // methods
@@ -989,7 +1037,7 @@ declare namespace createjs {
         toString(): string;
     }
 
-    export class Graphics {
+    class Graphics {
         constructor();
 
         // properties
@@ -1108,7 +1156,7 @@ declare namespace createjs {
 
     namespace Graphics
     {
-        export class Arc
+        class Arc
         {
             constructor(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: number);
 
@@ -1121,7 +1169,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class ArcTo
+        class ArcTo
         {
             constructor(x1: number, y1: number, x2: number, y2: number, radius: number);
 
@@ -1133,12 +1181,12 @@ declare namespace createjs {
             radius: number;
         }
 
-        export class BeginPath
+        class BeginPath
         {
 
         }
 
-        export class BezierCurveTo
+        class BezierCurveTo
         {
             constructor(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number);
 
@@ -1151,7 +1199,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class Circle
+        class Circle
         {
             constructor(x: number, y: number, radius: number);
 
@@ -1161,12 +1209,12 @@ declare namespace createjs {
             radius: number;
         }
 
-        export class ClosePath
+        class ClosePath
         {
 
         }
 
-        export class Fill
+        class Fill
         {
             constructor(style: Object, matrix?: Matrix2D);
 
@@ -1180,7 +1228,7 @@ declare namespace createjs {
             radialGradient(colors: number[], ratios: number[], x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): Fill;
         }
 
-        export class LineTo
+        class LineTo
         {
             constructor(x: number, y: number);
 
@@ -1189,7 +1237,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class MoveTo
+        class MoveTo
         {
             constructor(x: number, y: number);
 
@@ -1197,7 +1245,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class PolyStar
+        class PolyStar
         {
             constructor(x: number, y: number, radius: number, sides: number, pointSize: number, angle: number);
 
@@ -1210,7 +1258,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class QuadraticCurveTo
+        class QuadraticCurveTo
         {
             constructor(cpx: number, cpy: number, x: number, y: number);
 
@@ -1221,7 +1269,7 @@ declare namespace createjs {
             y: number;
         }
 
-        export class Rect
+        class Rect
         {
             constructor(x: number, y: number, w: number, h: number);
 
@@ -1232,7 +1280,7 @@ declare namespace createjs {
             h: number;
         }
 
-        export class RoundRect
+        class RoundRect
         {
             constructor(x: number, y: number, w: number, h: number, radiusTL: number, radiusTR: number, radiusBR: number, radiusBL: number);
 
@@ -1247,7 +1295,7 @@ declare namespace createjs {
             radiusBL: number;
         }
 
-        export class Stroke
+        class Stroke
         {
             constructor(style: Object, ignoreScale: boolean);
 
@@ -1261,7 +1309,7 @@ declare namespace createjs {
             radialGradient(colors: number[], ratios: number[], x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): Stroke;
         }
 
-        export class StrokeStyle
+        class StrokeStyle
         {
             constructor(width: number, caps: string, joints: number, miterLimit: number);
 
@@ -1272,7 +1320,7 @@ declare namespace createjs {
             width: number;
         }
 
-        export class StrokeDash
+        class StrokeDash
         {
             constructor(segments:any[], offset:number);
 
@@ -1284,7 +1332,7 @@ declare namespace createjs {
 
 
 
-    export class Matrix2D {
+    class Matrix2D {
         constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
 
         // properties
@@ -1322,7 +1370,7 @@ declare namespace createjs {
     }
 
 
-    export class MouseEvent extends Event {
+    class MouseEvent extends Event {
         constructor(type: string, bubbles: boolean, cancelable: boolean, stageX: number, stageY: number, nativeEvent: NativeMouseEvent, pointerID: number, primary: boolean, rawX: number, rawY: number);
 
         // properties
@@ -1369,7 +1417,7 @@ declare namespace createjs {
     }
 
 
-    export class MovieClip extends Container {
+    class MovieClip extends Container {
         constructor(mode?: string, startPosition?: number, loop?: boolean, labels?: Object);
 
         // properties
@@ -1410,12 +1458,12 @@ declare namespace createjs {
         stop(): void;
     }
 
-    export class MovieClipPlugin {
+    class MovieClipPlugin {
         // methods
         tween(tween: Tween, prop: string, value: string | number | boolean, startValues: any[], endValues: any[], ratio: number, wait: Object, end: Object): void;
     }
 
-    export class Point {
+    class Point {
         constructor(x?: number, y?: number);
 
         // properties
@@ -1429,7 +1477,7 @@ declare namespace createjs {
         toString(): string;
     }
 
-    export class Rectangle {
+    class Rectangle {
         constructor(x?: number, y?: number, width?: number, height?: number);
 
         // properties
@@ -1453,7 +1501,7 @@ declare namespace createjs {
     }
 
 
-    export class Shadow {
+    class Shadow {
         constructor(color: string, offsetX: number, offsetY: number, blur: number);
 
         // properties
@@ -1469,7 +1517,7 @@ declare namespace createjs {
     }
 
 
-    export class Shape extends DisplayObject {
+    class Shape extends DisplayObject {
         constructor(graphics?: Graphics);
 
         // properties
@@ -1482,7 +1530,7 @@ declare namespace createjs {
     }
 
 
-    export class Sprite extends DisplayObject {
+    class Sprite extends DisplayObject {
         constructor(spriteSheet: SpriteSheet, frameOrAnimation?: string | number);
 
         // properties
@@ -1510,7 +1558,7 @@ declare namespace createjs {
 
     }
 
-    export class SpriteContainer extends Container
+    class SpriteContainer extends Container
     {
         constructor(spriteSheet?: SpriteSheet);
 
@@ -1649,7 +1697,7 @@ declare namespace createjs {
      * 
      * 如果将字符串路径传递给SpriteSheets，它们将无法跨域工作。存储图像的服务器必须支持跨域请求，否则将无法工作。有关更多信息，请查看MDN上的CORS概述。
      */
-    export class SpriteSheet extends EventDispatcher {
+    class SpriteSheet extends EventDispatcher {
         /**
          * 
          * @param data 描述SpriteSheet数据的对象。
@@ -1693,7 +1741,7 @@ declare namespace createjs {
     }
 
 
-    export class SpriteSheetBuilder extends EventDispatcher {
+    class SpriteSheetBuilder extends EventDispatcher {
         constructor();
 
         // properties
@@ -1717,7 +1765,7 @@ declare namespace createjs {
     /**
      * SpriteSheetUtils类是用于处理SpriteSheets的静态方法的集合。精灵表是一系列图像（通常是动画帧）组合成规则网格上的单个图像。例如，一个由8个100x100图像组成的动画可以组合成一个400x200的精灵表（4帧宽2帧高）。SpriteSheetUtils类使用静态接口，不应实例化。
      */
-    export class SpriteSheetUtils {
+    class SpriteSheetUtils {
         /**
          * @deprecated
          */
@@ -1734,7 +1782,7 @@ declare namespace createjs {
         static mergeAlpha(rgbImage: HTMLImageElement, alphaImage: HTMLImageElement, canvas?: HTMLCanvasElement): HTMLCanvasElement; // deprecated
     }
 
-    export class SpriteStage extends Stage
+    class SpriteStage extends Stage
     {
         constructor(canvas: HTMLCanvasElement | string, preserveDrawingBuffer?: boolean, antialias?: boolean);
 
@@ -1752,7 +1800,7 @@ declare namespace createjs {
         updateViewport(width: number, height: number): void;
     }
 
-    export class Stage extends Container {
+    class Stage extends Container {
         constructor(canvas: HTMLCanvasElement | string | Object);
 
         // properties
@@ -1795,7 +1843,7 @@ declare namespace createjs {
         autoPurge?: number;
     }
 
-    export class StageGL extends Stage {
+    class StageGL extends Stage {
         constructor(canvas: HTMLCanvasElement | string | Object, options?: IStageGLOptions);
 
         // properties
@@ -1850,7 +1898,7 @@ declare namespace createjs {
      * 如果你是高手，你可以自己封装一个RichText类，哈哈哈！
      * @see http://www.createjs.com/Docs/EaselJS/classes/Text.html
      */
-    export class Text extends DisplayObject {
+    class Text extends DisplayObject {
         constructor(text?: string, font?: string, color?: string);
 
         // properties
@@ -1875,7 +1923,7 @@ declare namespace createjs {
         setTransform(x?: number, y?: number, scaleX?: number, scaleY?: number, rotation?: number, skewX?: number, skewY?: number, regX?: number, regY?: number): Text;
     }
 
-    export class Ticker {
+    class Ticker {
         // properties
         static framerate: number;
         static interval: number;
@@ -1951,7 +1999,7 @@ declare namespace createjs {
         static willTrigger(type: string): boolean;
     }
 
-    export class TickerEvent {
+    class TickerEvent {
         // properties
         target: Object;
         type: string;
@@ -1961,19 +2009,19 @@ declare namespace createjs {
         runTime: number;
     }
 
-    export class Touch {
+    class Touch {
         // methods
         static disable(stage: Stage): void;
         static enable(stage: Stage, singleTouch?: boolean, allowDefault?: boolean): boolean;
         static isSupported(): boolean;
     }
 
-    export class UID {
+    class UID {
         // methods
         static get(): number;
     }
 
-    export class CSSPlugin {
+    class CSSPlugin {
         constructor();
 
         // properties
@@ -1983,7 +2031,7 @@ declare namespace createjs {
         static install(): void;
     }
 
-    export class Ease {
+    class Ease {
         // methods
         static backIn: (amount: number) => number;
         static backInOut: (amount: number) => number;
@@ -2026,7 +2074,7 @@ declare namespace createjs {
         static sineOut: (amount: number) => number;
     }
 
-    export class MotionGuidePlugin {
+    class MotionGuidePlugin {
         constructor();
 
         //methods
@@ -2039,7 +2087,7 @@ declare namespace createjs {
         http://www.createjs.com/Docs/TweenJS/classes/SamplePlugin.html
     */
     /*
-    export class SamplePlugin {
+    class SamplePlugin {
         constructor();
 
         // properties
@@ -2053,7 +2101,7 @@ declare namespace createjs {
     }
     */
 
-    export class Timeline extends EventDispatcher {
+    class Timeline extends EventDispatcher {
         constructor (tweens: Tween[], labels: Object, props: Object);
 
         // properties
@@ -2079,7 +2127,7 @@ declare namespace createjs {
     }
 
 
-    export class Tween extends EventDispatcher {
+    class Tween extends EventDispatcher {
         constructor(target: Object, props?: Object, pluginData?: Object);
 
         // properties
@@ -2116,12 +2164,12 @@ declare namespace createjs {
 
     }
 
-    export class TweenJS {
+    class TweenJS {
         // properties
         static buildDate: string;
         static version: string;
     }
-    export class AbstractLoader extends EventDispatcher {
+    class AbstractLoader extends EventDispatcher {
         // properties
         static BINARY: string;
         canceled: boolean;
@@ -2174,12 +2222,12 @@ declare namespace createjs {
         toString(): string;
     }
 
-    export class AbstractMediaLoader
+    class AbstractMediaLoader
     {
         constructor(loadItem: Object, preferXHR: boolean, type: string);
     }
 
-    export class AbstractRequest
+    class AbstractRequest
     {
         constructor(item: LoadItem);
 
@@ -2188,7 +2236,7 @@ declare namespace createjs {
         load(): void;
     }
 
-    export class BinaryLoader extends AbstractLoader
+    class BinaryLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
@@ -2196,7 +2244,7 @@ declare namespace createjs {
         static canLoadItem(item: Object): boolean;
     }
 
-    export class CSSLoader extends AbstractLoader
+    class CSSLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
@@ -2210,7 +2258,7 @@ declare namespace createjs {
         export function parseXML(text: string, type: string): XMLDocument;
     }
 
-    export class ErrorEvent
+    class ErrorEvent
     {
         constructor(title?: string, message?: string, data?: Object);
 
@@ -2220,35 +2268,35 @@ declare namespace createjs {
         title: string;
     }
 
-    export class ImageLoader extends AbstractLoader
+    class ImageLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class JavaScriptLoader extends AbstractLoader
+    class JavaScriptLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class JSONLoader extends AbstractLoader
+    class JSONLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class JSONPLoader extends AbstractLoader
+    class JSONPLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class LoadItem
+    class LoadItem
     {
         // properties
         callback: string;
@@ -2270,7 +2318,7 @@ declare namespace createjs {
         set(props: Object): LoadItem;
     }
 
-    export class LoadQueue extends AbstractLoader
+    class LoadQueue extends AbstractLoader
     {
         constructor(preferXHR?: boolean, basePath?: string, crossOrigin?: string | boolean);
 
@@ -2299,7 +2347,7 @@ declare namespace createjs {
         unregisterLoader(loader: AbstractLoader): void;
     }
 
-    export class ManifestLoader extends AbstractLoader
+    class ManifestLoader extends AbstractLoader
     {
         constructor(loadItem: LoadItem | Object);
 
@@ -2307,18 +2355,18 @@ declare namespace createjs {
         static canLoadItem(item: LoadItem | Object): boolean;
     }
 
-    export class MediaTagRequest
+    class MediaTagRequest
     {
         constructor(loadItem: LoadItem, tag: HTMLAudioElement | HTMLVideoElement, srcAttribute: string);
     }
 
-    export class PreloadJS
+    class PreloadJS
     {
         static buildDate: string;
         static version: string;
     }
 
-    export class ProgressEvent
+    class ProgressEvent
     {
         constructor(loaded: number, total?: number);
 
@@ -2333,7 +2381,7 @@ declare namespace createjs {
     /**
      * 帮助解析加载项和确定文件类型等。
      */
-    export class RequestUtils
+    class RequestUtils
     {
         // properties
         static ABSOLUTE_PATH: RegExp;
@@ -2366,47 +2414,47 @@ declare namespace createjs {
         static parseURI(path: string): Object;
     }
 
-    export class SoundLoader extends AbstractLoader
+    class SoundLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class SpriteSheetLoader extends AbstractLoader
+    class SpriteSheetLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class SVGLoader extends AbstractLoader
+    class SVGLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class TagRequest
+    class TagRequest
     {
 
     }
 
-    export class TextLoader extends AbstractLoader
+    class TextLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class VideoLoader extends AbstractLoader
+    class VideoLoader extends AbstractLoader
     {
         constructor(loadItem: Object, preferXHR: boolean);
 
         static canLoadItem(item: Object): boolean;
     }
 
-    export class XHRRequest extends AbstractLoader
+    class XHRRequest extends AbstractLoader
     {
         constructor(item: Object);
 
@@ -2415,13 +2463,13 @@ declare namespace createjs {
         getResponseHeader(header: string): string;
     }
 
-    export class XMLLoader extends AbstractLoader
+    class XMLLoader extends AbstractLoader
     {
         constructor(loadItem: Object);
 
         static canLoadItem(item: Object): boolean;
     }
-    export class AbstractPlugin
+    class AbstractPlugin
     {
         // methods
         create(src: string, startTime: number, duration: number): AbstractSoundInstance;
@@ -2437,7 +2485,7 @@ declare namespace createjs {
         setVolume(value: number): boolean;
     }
 
-    export class AbstractSoundInstance extends EventDispatcher
+    class AbstractSoundInstance extends EventDispatcher
     {
         constructor(src: string, startTime: number, duration: number, playbackResource: Object);
 
@@ -2474,7 +2522,7 @@ declare namespace createjs {
         stop(): AbstractSoundInstance;
     }
 
-    export class FlashAudioLoader extends AbstractLoader
+    class FlashAudioLoader extends AbstractLoader
     {
         // properties
         flashId: string;
@@ -2483,7 +2531,7 @@ declare namespace createjs {
         setFlash(flash: Object): void;
     }
 
-    export class FlashAudioPlugin extends AbstractPlugin
+    class FlashAudioPlugin extends AbstractPlugin
     {
         // properties
         flashReady: boolean;
@@ -2494,7 +2542,7 @@ declare namespace createjs {
         static isSupported(): boolean;
     }
 
-    export class FlashAudioSoundInstance extends AbstractSoundInstance
+    class FlashAudioSoundInstance extends AbstractSoundInstance
     {
         constructor(src: string, startTime: number, duration: number, playbackResource: Object);
     }
@@ -2502,7 +2550,7 @@ declare namespace createjs {
     /**
      * @deprecated - use FlashAudioPlugin
      */
-    export class FlashPlugin {
+    class FlashPlugin {
         constructor();
 
         // properties
@@ -2525,7 +2573,7 @@ declare namespace createjs {
         setVolume(value: number): boolean;
     }
 
-    export class HTMLAudioPlugin extends AbstractPlugin
+    class HTMLAudioPlugin extends AbstractPlugin
     {
         constructor();
 
@@ -2538,17 +2586,17 @@ declare namespace createjs {
         static isSupported(): boolean;
     }
 
-    export class HTMLAudioSoundInstance extends AbstractSoundInstance
+    class HTMLAudioSoundInstance extends AbstractSoundInstance
     {
         constructor(src: string, startTime: number, duration: number, playbackResource: Object);
     }
 
-    export class HTMLAudioTagPool
+    class HTMLAudioTagPool
     {
 
     }
 
-    export class PlayPropsConfig
+    class PlayPropsConfig
     {
         delay:number;
         duration:number;
@@ -2562,7 +2610,7 @@ declare namespace createjs {
         set ( props:any ): PlayPropsConfig;
     }
 
-    export class Sound extends EventDispatcher
+    class Sound extends EventDispatcher
     {
         // properties
         static activePlugin: Object;
@@ -2630,17 +2678,17 @@ declare namespace createjs {
         static willTrigger(type: string): boolean;
     }
 
-    export class SoundJS {
+    class SoundJS {
         static buildDate: string;
         static version: string;
     }
 
-    export class WebAudioLoader
+    class WebAudioLoader
     {
         static context: AudioContext;
     }
 
-    export class WebAudioPlugin extends AbstractPlugin
+    class WebAudioPlugin extends AbstractPlugin
     {
         constructor();
 
@@ -2655,7 +2703,7 @@ declare namespace createjs {
         static playEmptySound(): void;
     }
 
-    export class WebAudioSoundInstance extends AbstractSoundInstance
+    class WebAudioSoundInstance extends AbstractSoundInstance
     {
         constructor(src: string, startTime: number, duration: number, playbackResource: Object);
 
@@ -2667,3 +2715,4 @@ declare namespace createjs {
         sourceNode: AudioNode;
     }
 }
+export default createjs;
