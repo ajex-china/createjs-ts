@@ -277,8 +277,28 @@ declare namespace createjs {
 
     /**
      * 位图表示显示列表中的图像、画布或视频。可以使用现有HTML元素或字符串实例化位图。
+     * 
+     * 举个栗子
+     * ```js
+     * var bitmap = new createjs.Bitmap("imagePath.jpg");
+     * ```
+     * 注意事项：
+     * 
+     * 1.当使用可能循环或查找的视频源时，请使用 VideoBuffer 对象以防止闪烁/闪烁。
+     * 
+     * 2.当使用的图像或者img标签尚未加载时，在图像加载完成后，stage需要重绘才能显示该图像。
+     * 
+     * 3.具有SVG源的位图当前不考虑0或1以外的alpha值。要解决此问题，可以缓存位图。
+     * 
+     * 4.带有SVG源的位图会用跨源数据污染画布，这会阻止交互性。除最近的Firefox版本外，所有浏览器都会出现这种情况。
+     * 
+     * 5.对于跨源加载的图像，如果使用鼠标交互、使用 getObjectUnderPoint等方法、应用滤镜或者缓存时会抛出cross-origin security报错。你可以通过在将图像传递给EaselJS之前设置img标签的 crossOrigin 属性来解决这个问题，例如：img.crossOrigin="Anonymous";
      */
     class Bitmap extends DisplayObject {
+        /**
+         * 要显示的源图像。这可以是CanvasImageSource (image, video, canvas)、具有返回CanvasImageSourcean的getImage方法的对象或图像的字符串URL。 如果是后者，将使用URL作为其src的新图像实例。
+         * @param imageOrUrl 
+         */
         constructor(imageOrUrl?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string);
 
         // properties
@@ -289,8 +309,11 @@ declare namespace createjs {
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
         /**
          * 指定要绘制的源图像的区域。如果省略，将绘制整个图像。
+         * 
          * 注意：
+         * 
          * 1.视频源必须设置宽度/高度才能正确使用sourceRect
+         * 
          * 2.缓存对象将忽略sourceRect属性
          */
         sourceRect: Rectangle;
