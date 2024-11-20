@@ -22,10 +22,16 @@ interface NativeMouseEvent extends MouseEvent {
 
 declare namespace createjs {
     /**
-     * 包含所有事件共享的属性和方法，以便与EventDispatcher一起使用。
+     * 包含所有事件共享的属性和方法，以便与{@link EventDispatcher}一起使用。
      * 请注意，事件对象经常被重用，因此您永远不应该依赖于事件对象在调用堆栈之外的状态。
      */
     class Event {
+        /**
+         * 
+         * @param type 事件类型。例如，Event.COMPLETE
+         * @param bubbles 指示事件是否会在显示列表中冒泡。
+         * @param cancelable 指示是否可以取消此事件的默认行为。
+         */
         constructor(type?: string, bubbles?: boolean, cancelable?: boolean);
 
         // properties
@@ -75,12 +81,43 @@ declare namespace createjs {
         total: number;
 
         // methods
+        /**
+         * 返回Event实例的克隆。
+         * @returns Event实例的克隆。
+         */
         clone(): Event;
+        /**
+         * 如果事件可取消，则将{@link defaultPrevented}设置为true。反映DOM2事件标准。一般来说，如果事件可取消，则调用preventDefault()将取消与该事件关联的默认行为。
+         */
         preventDefault(): void;
+        /**
+         * 通过removeEventListener();删除活动监听器
+         * ```js
+         * myBtn.addEventListener("click", function(evt) {
+         *     // do stuff...
+         *     evt.remove(); // 删除此侦听器。
+         * });
+         * ```
+         */
         remove(): void;
+        /**
+         * 提供一种可链接的快捷方式，用于在实例上设置多个属性。
+         * @param props 包含要复制到实例的属性的通用对象。
+         * @returns 返回方法被调用的实例（对于链式调用很有用。）
+         */
         set(props: Object): Event;
+        /**
+         * 将{@link propagationStopped}和{@link immediatePropagationStopped}设置为true。反映DOM事件标准。
+         */
         stopImmediatePropagation(): void;
+        /**
+         * 将{@link propagationStopped}设置为true。反映DOM事件标准。
+         */
         stopPropagation(): void;
+        /**
+         * 返回此对象的字符串表示形式。
+         * @returns 实例的字符串表示。
+         */
         toString(): string;
     }
     /**
