@@ -2071,7 +2071,9 @@ declare namespace createjs {
         static toString(): string;
         static willTrigger(type: string): boolean;
     }
-
+    /**
+     * 目前没有TickerEvent的定义
+     */
     class TickerEvent {
         // properties
         target: Object;
