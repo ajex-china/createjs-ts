@@ -2102,7 +2102,18 @@ declare namespace createjs {
          * @param stage 目标舞台。
          */
         static disable(stage: Stage): void;
+        /**
+         * 为舞台启用触摸事件交互，目前支持iOS（以及兼容的浏览器，如现代Android浏览器）和IE10/11。支持单点触控和多点触控模式。扩展了EaselJS {@link MouseEvent}模型，但不支持双击或over/out事件。有关详细信息，请参阅MouseEvent MouseEvent/pointerId:属性。
+         * @param stage 启用触摸事件交互的舞台。
+         * @param singleTouch 是否单点触摸模式，默认是false。
+         * @param allowDefault 如果为真，则当用户与目标画布交互时，将允许默认手势操作（例如滚动、缩放），默认是false。
+         * @returns 如果在目标舞台上成功启用了触摸，则返回true。
+         */
         static enable(stage: Stage, singleTouch?: boolean, allowDefault?: boolean): boolean;
+        /**
+         * 如果当前浏览器支持触摸，则返回true。
+         * @returns 指示当前浏览器是否支持触摸。
+         */
         static isSupported(): boolean;
     }
     /**
