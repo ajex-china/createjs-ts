@@ -321,7 +321,7 @@ declare namespace createjs {
      * ```
      * 注意事项：
      * 
-     * 1.当使用可能循环或查找的视频源时，请使用 VideoBuffer 对象以防止闪烁/闪烁。
+     * 1.当使用可能循环或查找的视频源时，请使用{@link VideoBuffer}对象以防止闪烁/闪烁。
      * 
      * 2.当使用的图像或者img标签尚未加载时，在图像加载完成后，stage需要重绘才能显示该图像。
      * 
@@ -2103,7 +2103,26 @@ declare namespace createjs {
         // methods
         static install(): void;
     }
-
+    /**
+     * 当HTML视频进行搜索时，包括循环时，在新帧可用之前有一段不确定的时间。这可能会导致视频在绘制到画布上时闪烁或闪烁。VideoBuffer类通过将每一帧绘制到屏幕外画布并在寻道过程中保留前一帧来解决这个问题。
+     * ```js
+     * var myBuffer = new createjs.VideoBuffer(myVideo);
+     * var myBitmap = new Bitmap(myBuffer);
+     * ```
+     */
+    class VideoBuffer{
+        /**
+         * 
+         * @param video 要缓冲的HTML视频元素。
+         */
+        constructor(video: HTMLVideoElement);
+        // methods
+        /**
+         * 获取一个HTML画布元素，显示当前视频帧，或者在寻道/循环中显示前一帧。主要用于位图。
+         * @returns 画布元素
+         */
+        getImage(): HTMLCanvasElement;
+    }
     class Ease {
         // methods
         static backIn: (amount: number) => number;
