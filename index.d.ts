@@ -2081,16 +2081,39 @@ declare namespace createjs {
         time: number;
         runTime: number;
     }
-
+    /**
+     * EaselJS中支持多点触摸设备的全局实用程序。目前支持W3C Touch API（iOS和现代Android浏览器）和Pointer API（IE），包括IE10中的ms-prefixed事件，以及IE11中的unfixed事件。
+     * 
+     * 在清理应用程序时确保禁用触摸。启用它前，您不必检查是否支持触摸，因为如果不支持触摸，它将失效。
+     * 案例：
+     * ```js
+     * var stage = new createjs.Stage("canvasId");
+     * createjs.Touch.enable(stage);
+     * ```
+     * 注意：当舞台不需要触摸功能时，禁用Touch非常重要：
+     * ```js
+     * createjs.Touch.disable(stage);
+     * ```
+     */
     class Touch {
         // methods
+        /**
+         * 调用该方法将会移除所有注册在canvas（stage.canvas）的触摸事件（包含touchstart、touchmove、touchend、touchcancel）侦听器。
+         * @param stage 目标舞台。
+         */
         static disable(stage: Stage): void;
         static enable(stage: Stage, singleTouch?: boolean, allowDefault?: boolean): boolean;
         static isSupported(): boolean;
     }
-
+    /**
+     * 用于生成连续唯一ID号的全局实用程序。UID类使用静态接口（例如UID.get()），不应实例化。
+     */
     class UID {
         // methods
+        /**
+         * 返回下一个唯一id。
+         * @returns 下一个唯一id
+         */
         static get(): number;
     }
 
