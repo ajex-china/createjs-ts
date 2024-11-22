@@ -2012,20 +2012,45 @@ declare namespace createjs {
     /**
      * 显示一行或多行动态文本（不可由用户编辑）。
      * 支持基本的换行（使用lineWidth），仅在空格和制表符上换行。
-     * 注意，您可以使用DOMElement将HTML文本显示在canvas的上方或下方，通过localToGlobal方法定位，以此作为输入文本使用。
+     * 注意，您可以使用{@link DOMElement}将HTML文本显示在canvas的上方或下方，通过{@link localToGlobal}方法定位，以此作为输入文本使用。
+     * 
      * 注意，Text不支持HTML文本，并且一个Text实例只能显示一种字体样式。要使用多种字体样式，您需要创建多个Text实例，并手动定位它们。
+     * 
+     * 案例：
+     * ```js
+     * var text = new createjs.Text("Hello World", "20px Arial", "#ff7700");
+     * text.x = 100;
+     * text.textBaseline = "alphabetic";
+     * ```
+     * CreateJS Text支持web字体（与Canvas的规则相同）。字体必须加载并由浏览器支持才能显示。
+     * 
+     * 注意：渲染文本可能比较消耗性能，因此尽可能缓存实例。请注意，并非所有浏览器都会呈现完全相同的文本。
+     * 
      * 如果你是高手，你可以自己封装一个RichText类，哈哈哈！
+     * 
      * @see http://www.createjs.com/Docs/EaselJS/classes/Text.html
      */
     class Text extends DisplayObject {
+        /**
+         * 
+         * @param text 显示的文本
+         * @param font 要使用的字体样式。CSS字体属性的任何有效值都是可以接受的（例如“bold 36px Arial”）。
+         * @param color 用于绘制文本的颜色。CSS颜色属性的任何有效值都是可接受的（例如“#F00”、“red”或“#FF0000”）。
+         */
         constructor(text?: string, font?: string, color?: string);
 
         // properties
+        /** 用于绘制文本的颜色。CSS颜色属性的任何有效值都是可接受的（例如“#F00”）。默认值为“#000”。它还将接受有效的canvas fillStyle值。 */
         color: string;
+        /** 要使用的字体样式。CSS字体属性的任何有效值都是可以接受的（例如“bold 36px Arial”）。 */
         font: string;
+        /** 指示多行文本的行高（基线之间的垂直距离）。如果为null或0，则使用getMeasuredLineHeight的值。 */
         lineHeight: number;
+        /** 指示一行文本在换行为多行之前的最大宽度。如果为null，则不会对文本进行包装。 */
         lineWidth: number;
+        /** 绘制文本的最大宽度。如果指定了maxWidth（非空），文本将被压缩或缩小以适应此宽度。有关详细信息，请查看[whatwg](http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-styles)规范。 */
         maxWidth: number;
+        /** 如果大于0，文本将绘制为指定宽度的笔划（轮廓）。 */
         outline: number;
         text: string;
         /** 水平文本对齐方式。"start"、"end"、"left"、"right"和"center"中的任意一个。有关详细信息，请查看whatwg规范。默认值为“left”。 */
