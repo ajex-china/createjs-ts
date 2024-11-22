@@ -285,7 +285,8 @@ declare namespace createjs {
          */
         toString(): string;
         /**
-         * 指示此对象或其任何祖先（父级、父级的父级等）上是否至少有一个指定事件类型的侦听器。返回值true表示，如果从该对象分派指定类型的冒泡事件，它将触发至少一个侦听器。
+         * 指示此对象或其任何祖先（父级、父级的父级等）上是否至少有一个指定事件类型的侦听器。
+         * 返回值true表示，如果从该对象分派指定类型的冒泡事件，它将触发至少一个侦听器。
          * 
          * 这类似于{@link hasEventListener}，但它在整个事件流中搜索侦听器，而不仅仅是这个对象。
          * @param type 事件类型
@@ -309,7 +310,8 @@ declare namespace createjs {
      */
     export function indexOf(array: any[], searchElement: Object): number;
     /**
-     * 通过创建格式为prefix_methodName的别名，提升超类上被重写的任何方法。建议使用超类的名称作为前缀。超类的构造函数的别名总是以前缀_构造函数的格式添加。这允许子类在不使用function.call的情况下调用超类方法，从而提供更好的性能。
+     * 通过创建格式为prefix_methodName的别名，提升超类上被重写的任何方法。建议使用超类的名称作为前缀。超类的构造函数的别名总是以前缀_构造函数的格式添加。
+     * 这允许子类在不使用function.call的情况下调用超类方法，从而提供更好的性能。
      * 
      * 例如，如果MySubClass扩展了MySuperClass，并且两者都定义了一个draw方法，那么调用promote(MySubClass, "MySuperClass")将向MySubClass添加一个MySupClass_constructor方法，并将MySupClass上的draw方法提升为MySupClass_draw的MySubClass原型。
      * 
@@ -342,7 +344,8 @@ declare namespace createjs {
         clone(): AlphaMapFilter;
     }
     /**
-     * 将遮罩图像（或画布）中的alpha应用于目标，这样结果的alpha通道将从遮罩中导出，而RGB通道将从目标中复制。例如，这可以用于将alpha掩码应用于显示对象。这也可以用于将JPG压缩的RGB图像与PNG32 alpha掩码组合，这可以导致比包含RGB的单个PNG32小得多的文件大小。
+     * 将遮罩图像（或画布）中的alpha应用于目标，这样结果的alpha通道将从遮罩中导出，而RGB通道将从目标中复制。例如，这可以用于将alpha掩码应用于显示对象。
+     * 这也可以用于将JPG压缩的RGB图像与PNG32 alpha掩码组合，这可以导致比包含RGB的单个PNG32小得多的文件大小。
      */
     class AlphaMaskFilter extends Filter {
         constructor(mask: HTMLImageElement | HTMLCanvasElement);
@@ -375,11 +378,13 @@ declare namespace createjs {
      * 
      * 4.带有SVG源的位图会用跨源数据污染画布，这会阻止交互性。除最近的Firefox版本外，所有浏览器都会出现这种情况。
      * 
-     * 5.对于跨源加载的图像，如果使用鼠标交互、使用 getObjectUnderPoint等方法、应用滤镜或者缓存时会抛出cross-origin security报错。你可以通过在将图像传递给EaselJS之前设置img标签的 crossOrigin 属性来解决这个问题，例如：img.crossOrigin="Anonymous";
+     * 5.对于跨源加载的图像，如果使用鼠标交互、使用 getObjectUnderPoint等方法、应用滤镜或者缓存时会抛出cross-origin security报错。
+     * 你可以通过在将图像传递给EaselJS之前设置img标签的 crossOrigin 属性来解决这个问题，例如：img.crossOrigin="Anonymous";
      */
     class Bitmap extends DisplayObject {
         /**
-         * 要显示的源图像。这可以是CanvasImageSource (image, video, canvas)、具有返回CanvasImageSourcean的getImage方法的对象或图像的字符串URL。 如果是后者，将使用URL作为其src的新图像实例。
+         * 要显示的源图像。这可以是CanvasImageSource (image, video, canvas)、具有返回CanvasImageSourcean的getImage方法的对象或图像的字符串URL。
+         * 如果是后者，将使用URL作为其src的新图像实例。
          * @param imageOrUrl 
          */
         constructor(imageOrUrl?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Object | string);
@@ -387,7 +392,8 @@ declare namespace createjs {
         // properties
 
         /**
-         * 要显示的源图像。这可以是CanvasImageSource（图像、视频、画布）、具有返回CanvasImage源的getImage方法的对象或图像的字符串URL。如果是后者，将使用URL作为其src的新图像实例。
+         * 要显示的源图像。这可以是CanvasImageSource（图像、视频、画布）、具有返回CanvasImage源的getImage方法的对象或图像的字符串URL。
+         * 如果是后者，将使用URL作为其src的新图像实例。
          */
         image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
         /**
@@ -405,8 +411,18 @@ declare namespace createjs {
         clone(): Bitmap;
     }
     /**
-     * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将DisplayObject对象渲染为位图。实际缓存本身仍然与cacheCanvas一起存储在目标上。Bitmap对象执行缓存几乎没有好处，因为它已经是单个图像了。如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。缓存不会自动更新，除非调用cache方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
+     * BitmapCache类集成了“缓存”对象所需的所有缓存属性和逻辑，它将{@link DisplayObject}对象渲染为位图。
+     * 此信息和功能曾经位于DisplayObject中的缓存方法上，但被移动到了BitmapCache类中。
+     * 
+     * 在这种情况下，缓存纯粹是视觉上的，它会将DisplayObject渲染成一个图像来使用，而不是对象。
+     * 实际缓存本身仍然与{@link cacheCanvas}一起存储在目标上。{@link Bitmap}对象执行缓存几乎没有好处，因为它已经是单个图像了。
+     * 如果容器包含多个复杂且不经常移动的内容，使用缓存渲染图像将提高整体渲染速度。
+     * 缓存不会自动更新，除非调用{@link cache}方法。如果缓存像Stage一样每帧更新一次，则可能无法提高渲染性能。
+     * 当对象的内容变化频率很低时（画面长时间静止），最好使用缓存。
+     * 
      * 缓存也是应用滤镜的必要条件。当滤镜不改变时，直接使用缓存显示，不需要每帧渲染。
+     * BitmapCache还负责对对象应用过滤器，并根据这种关系读取每个{@link Filter}。在处理Context2D画布时，不建议使用实时过滤器。
+     * 为了获得最佳性能并仍然允许一些视觉效果，请在可能的情况下使用compositeOperation。
      */
     class BitmapCache {
         constructor();
@@ -427,30 +443,80 @@ declare namespace createjs {
          */
         toString(): string;
         /**
-         * 实际上创建了正确的缓存表面和与之相关的属性。缓存函数和这个类描述讨论了缓存及其好处。以下是如何使用options对象的详细细节。
+         * 实际上创建了正确的缓存表面和与之相关的属性。缓存函数和这个类描述讨论了{@link cache}及其好处。以下是如何使用options对象的详细细节。
+         * 
          * 1.如果options.useGL设置为"new"，则会创建一个StageGL并将其包含在其中，以便在渲染缓存时使用。
+         * 
          * 2.如果options.useGL设置为"stage"，如果当前stage是StageGL，则将使用它。如果没有，它将默认为"new"。
+         * 
          * 3.如果options.useGL是StageGL实例，它不会创建一个实例，而是使用提供的实例。
+         * 
          * 4.如果options.useGL为undefined，将执行上下文2D缓存。
          * 
-         * 这意味着您可以使用StageGL和2D的任何组合，其中一个、两个或两个阶段和缓存都是WebGL。在StageGL显示列表中使用"new"是非常不受欢迎的，但仍然是一种选择。由于负面性能原因和上述类别复杂性中提到的图像加载限制，应避免使用。
+         * 这意味着您可以使用StageGL和2D的任何组合，其中一个、两个或两个阶段和缓存都是WebGL。在StageGL显示列表中使用"new"是非常不受欢迎的，但仍然是一种选择。
+         * 由于负面性能原因和上述类别复杂性中提到的图像加载限制，应避免使用。
          * 
-         * 当“options.useGL”设置为目标和WebGL的父阶段时，通过使用"RenderTextures"而不是画布元素来提高性能。这些是存储在GPU中的图形卡上的内部纹理。因为它们不再是画布，所以无法执行常规画布所能执行的操作。这样做的好处是避免了将纹理从GPU来回复制到Canvas元素的速度减慢。这意味着“阶段”是可用的推荐选项。
+         * 当“options.useGL”设置为目标和WebGL的父阶段时，通过使用"RenderTextures"而不是画布元素来提高性能。这些是存储在GPU中的图形卡上的内部纹理。
+         * 因为它们不再是画布，所以无法执行常规画布所能执行的操作。这样做的好处是避免了将纹理从GPU来回复制到Canvas元素的速度减慢。这意味着“阶段”是可用的推荐选项。
          * 
          * StageGL缓存不会推断绘制StageGL当前无法绘制的对象的能力，即在缓存形状、文本等时不要使用WebGL上下文缓存。
          * 
-         * 您可能希望创建自己的StageGL实例来控制诸如透明颜色、透明度、AA等因素。如果您这样做，则传入一个新实例而不是“true”，库将自动在您的实例上将StageGL/isCacheControlled设置为true。这将触发它正确运行，而不是假设您的主上下文是WebGL。
+         * 具有2D上下文的WebGL缓存
+         * ```js
+         * var stage = new createjs.Stage();
+         * var bmp = new createjs.Bitmap(src);
+         * bmp.cache(0, 0, bmp.width, bmp.height, 1, {gl: "new"});          // no StageGL to use, so make one
+         * 
+         * var shape = new createjs.Shape();
+         * shape.graphics.clear().fill("red").drawRect(0,0,20,20);
+         * shape.cache(0, 0, 20, 20, 1);
+         * ```
+         * 带有WebGL上下文的WebGL缓存
+         * ```js
+         * var stageGL = new createjs.StageGL();
+         * var bmp = new createjs.Bitmap(src);
+         * bmp.cache(0, 0, bmp.width, bmp.height, 1, {gl: "stage"});       // use our StageGL to cache
+         * 
+         * var shape = new createjs.Shape();
+         * shape.graphics.clear().fill("red").drawRect(0,0,20,20);
+         * shape.cache(0, 0, 20, 20, 1);
+         * ```
+         * 您可能希望创建自己的StageGL实例来控制诸如透明颜色、透明度、AA等因素。
+         * 如果您这样做，则传入一个新实例而不是“true”，库将自动在您的实例上将StageGL/isCacheControlled设置为true。
+         * 这将触发它正确运行，而不是假设您的主上下文是WebGL。
          * @param target 
          * @param x 
          * @param y 
-         * @param width 
-         * @param height 
-         * @param scale 将创建缓存的比例。例如，如果使用myShape.cache（0,0100100.2）缓存矢量形状，则生成的cacheCanvas将为200x200 px。这样可以更逼真地缩放和旋转缓存的元素。默认值为1。
+         * @param width 缓存区域的宽度。
+         * @param height 缓存区域的高度。
+         * @param scale 将创建缓存的比例。例如，如果使用myShape.cache（0,0100100.2）缓存矢量形状，则生成的cacheCanvas将为200x200 px。
+         * 这样可以更逼真地缩放和旋转缓存的元素。默认值为1。
+         * @param {Object} [options=undefined] 为缓存逻辑指定其他参数。
+         * @param {undefined|"new"|"stage"|StageGL} [options.useGL=undefined] 选择是使用上下文2D还是WebGL渲染，以及是创建新的舞台实例还是使用现有的舞台实例。
+         * 有关使用的详细信息，请参阅上文。
+         * @for BitmapCache
          */
-        define(target: DisplayObject, x: number, y: number, width: number, height: number, scale?: number): void;
+        define(target: DisplayObject, x: number, y: number, width: number, height: number, scale?: number, options?:any): void;
+        /**
+         * 直接通过{@link updateCache}调用，也可以在内部调用。这具有双重责任，即确保表面已准备好绘制，并执行绘制。
+         * 有关每种行为的完整详细信息，请分别检查受保护的函数{@link _updateSurface}和{@link _drawToCache}。
+         * @param compositeOperation 
+         */
         update(compositeOperation?: string): void;
+        /**
+         * 重置并释放与此缓存关联的所有属性和内存。
+         */
         release(): void;
+        /**
+         * 返回缓存的数据URL，如果未缓存此显示对象，则返回null。使用cacheID确保在缓存未更改的情况下不会生成新的数据URL。
+         * @returns {string} 缓存的图像数据url。
+         */
         getCacheDataURL(): string;
+        /**
+         * 使用context2D绘图命令显示正在使用的缓存画布。
+         * @param ctx 绘制的画布上下文。
+         * @returns {boolean} 绘制是否成功
+         */
         draw(ctx: CanvasRenderingContext2D): boolean;
     }
     /**
