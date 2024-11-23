@@ -520,7 +520,14 @@ declare namespace createjs {
         draw(ctx: CanvasRenderingContext2D): boolean;
     }
     /**
-     * 对位图使用九宫格缩放
+     * 对位图使用九宫格缩放。
+     * 
+     * 案例：
+     * ```js
+     * var sb = new createjs.ScaleBitmap(image, new createjs.Rectangle(12, 12, 5, 10));
+     * sb.setDrawSize(200, 300);
+     * stage.addChild(sb);
+     * ```
      */
     class ScaleBitmap extends DisplayObject {
         /**
@@ -553,11 +560,14 @@ declare namespace createjs {
          * @param newHeight 
          */
         setDrawSize (newWidth: number, newHeight: number): void;
+        /**
+         * 返回克隆的ScaleBitmap实例。
+         */
         clone(): ScaleBitmap;
     }
     /**
      * 使用sprite sheet中定义的位图图示符显示文本。支持使用换行字符的多行文本，但不支持自动换行。
-     * 有关定义图示符的详细信息，请参见 spriteSheet 属性。
+     * 有关定义图示符的详细信息，请参见{@link spriteSheet}属性。
      * 
      * 重要提示： 虽然BitmapText扩展了Container，但它并不是设计为一个容器。因此，addChild和removeChild等方法被禁用。
      */
@@ -568,33 +578,81 @@ declare namespace createjs {
          * @param spriteSheet 定义字符图示符的精灵表。
          */
         constructor(text?:string, spriteSheet?:SpriteSheet);
-
+        /**
+         * BitmapText使用Sprite实例绘制文本。为了减少实例的创建和销毁（从而减少垃圾收集），它维护了一个内部的sprite实例对象池以供重用。
+         * 增加此值会导致保留更多精灵，略微增加内存使用，但会减少实例化。
+         * @defaultValue 100
+         */
         static maxPoolSize: number;
 
         // properties
+        /**
+         * 此间距（像素）将添加到输出中的每个字符之后。
+         * @defaultValue 0
+         */
         letterSpacing: number;
+        /**
+         * 每行文字的高度。如果为0，则它将使用通过检查“1”、“T”或“L”字符的高度（按此顺序）计算的行高度。
+         * 如果这些字符没有定义，它将使用子画面第一帧的高度。
+         * @defaultValue 0
+         */
         lineHeight: number;
+        /**
+         * 如果子画面中未定义空格字符，则将插入等于spaceWidth的空像素。
+         * 如果为0，则它将使用通过检查“1”、“l”、“E”或“a”字符的宽度（按此顺序）计算的值。
+         * 如果这些字符没有定义，它将使用子画面第一帧的宽度。
+         * @defaultValue 0
+         */
         spaceWidth: number;
         /**
-         * 一个SpriteSheet实例，用于定义此位图文本的图示符。每个字形/角色都应该在精灵表中定义一个与对应角色名称相同的单帧动画。例如，以下动画定义：
-         * 
-         * 		"A": {frames: [0]}
-         * 
+         * 定义此位图文本的字形的SpriteSheet实例。
+         * 每个字形/字符都应该在精灵表中定义一个与相应字符同名的单帧动画。
+         * 例如，以下动画定义：
+         * ```js
+         * "A": {frames: [0]}
+         * ```
          * 将指示应为“A”字符绘制子画面索引0处的帧。简短的形式也是可以接受的：
-         * 
-         * 		"A": 0
-         * 
+         * ```js
+         * "A": 0
+         * ```
          * 请注意，如果在精灵表中找不到文本中的字符，它也会尝试使用其他大小写（大写或小写）。
-         * 有关定义精灵表数据的详细信息，请参见精灵表。
+         * 
+         * 有关定义精灵表数据的详细信息，请参见{@link SpriteSheet}。
+         * @defaultValue null
          */
         spriteSheet: SpriteSheet;
-        /** 要显示的文本。 */
+        /**
+         * 要显示的文本。
+         * @defaultValue ""
+         */
         text: string;
     }
     /**
-     * 将方框模糊应用于上下文2D中的DisplayObjects，并将高斯模糊应用于webgl中。请注意，此滤镜相当密集，尤其是当质量设置为高于1时。
+     * 将方框模糊应用于context 2D中的DisplayObjects，并将高斯模糊应用于webgl中。请注意，此滤镜相当密集，尤其是当质量设置为高于1时。
+     * 
+     * 案例：
+     * 
+     * 此示例创建一个红色圆圈，然后对其应用5像素的模糊。
+     * 它使用getBounds方法来解释模糊引起的扩散。
+     * ```js
+     * var shape = new createjs.Shape().set({x:100,y:100});
+     * shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);
+     * 
+     * var blurFilter = new createjs.BlurFilter(5, 5, 1);
+     * shape.filters = [blurFilter];
+     * var bounds = blurFilter.getBounds();
+     * 
+     * shape.cache(-50+bounds.x, -50+bounds.y, 100+bounds.width, 100+bounds.height);
+     * ```
+     * 有关应用滤镜的详细信息，请参阅{@link Filter}。
      */
     class BlurFilter extends Filter {
+        /**
+         * 
+         * @param blurX 水平模糊半径（像素）。
+         * @param blurY 垂直模糊半径（像素）。
+         * @param quality 模糊迭代次数。
+         */
         constructor(blurX?: number, blurY?: number, quality?: number)
 
         // properties
@@ -602,7 +660,11 @@ declare namespace createjs {
         blurX: number
         /** 以像素为单位的垂直模糊半径。 */
         blurY: number
-        /** 模糊迭代次数。 */
+        /**
+         * 模糊迭代次数。例如，值为1将产生粗糙模糊。
+         * 值为2将产生更平滑的模糊，但运行时间是原来的两倍。
+         * @defaultValue 1
+         */
         quality: number
 
         // methods
