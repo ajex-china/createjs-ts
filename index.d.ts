@@ -671,20 +671,21 @@ declare namespace createjs {
         clone(): BlurFilter
     }
     /**
-     * ButtonHelper是一个帮助类，用于从 MovieClip 或 Sprite 实例创建交互式按钮。该类将截获对象的鼠标事件，并自动调用 gotoAndStop 或 gotoAndPlay 到相应的动画标签，添加指针光标，并允许用户定义命中状态帧。
+     * ButtonHelper是一个帮助类，用于从 MovieClip 或 Sprite 实例创建交互式按钮。
+     * 该类将截获对象的鼠标事件，并自动调用 gotoAndStop 或 gotoAndPlay 到相应的动画标签，添加指针光标，并允许用户定义命中状态帧。
      * 
      * ButtonHelper实例不需要加入stage，但应保留引用以防止垃圾收集。
      * 
-     * 注意：只有启用了enableMouseOver，按钮的over状态才会触发。
+     * 注意：只有启用了{@link enableMouseOver}，按钮的over状态才会触发。
      * 
-     * Example
-     * 
+     * 案例：
+     * ```js
      * 		var helper = new createjs.ButtonHelper(myInstance, "out", "over", "down", false, myInstance, "hit");
      * 		myInstance.addEventListener("click", handleClick);
      * 		function handleClick(event) {
      * 		    // Click Happened.
      * 		}
-     * 
+     * ```
      */
     class ButtonHelper {
         /**
@@ -695,37 +696,47 @@ declare namespace createjs {
          * @param downLabel 当鼠标指针在按钮上按下时要跳转到的标签或动画。
          * @param play 当按钮状态改变时，是调用"gotoAndPlay"还是"gotoAndStop"？
          * @param hitArea 一个可选项目，用作按钮的点击区域。如果未对此进行定义，则将使用按钮的可见区域。请注意，hitState可以使用与“target”参数相同的实例。
-         * @param hitLabel hitArea实例上定义hitArea边界的标签或动画。如果这是null，那么将使用hitArea的默认状态*。
+         * @param hitLabel hitArea实例上定义hitArea边界的标签或动画。如果这是null，那么将使用hitArea的默认状态。*
          */
-        constructor(target: Sprite, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
-        constructor(target: MovieClip, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
+        constructor(target: Sprite|MovieClip, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
+        //constructor(target: MovieClip, outLabel?: string, overLabel?: string, downLabel?: string, play?: boolean, hitArea?: DisplayObject, hitLabel?: string);
 
         // properties
+        /** 当用户按下目标时显示的标签名称或帧号。默认为“down”。 */
         downLabel: string | number;
+        /** 当用户将鼠标悬停在目标上时显示的标签名称或帧号。默认为“out”。 */
         outLabel: string | number;
+        /** 当用户将鼠标移出目标时显示的标签名称或帧号。默认为“over”。 */
         overLabel: string | number;
+        /** 如果为true，则ButtonHelper将调用gotoAndPlay，如果为false，则将使用gotoAndStop。默认值为false。 */
         play: boolean;
+        /** 此按钮助手的目标。 */
         target: MovieClip | Sprite;
+        /** 启用或禁用目标上的按钮功能。 */
         enabled: boolean;
 
         // methods
         /**
-         * @deprecated - use the 'enabled' property instead
+         * @deprecated - 使用{@link enabled}属性代替
          */
         setEnabled(value: boolean): void;
         /**
-         * @deprecated - use the 'enabled' property instead
+         * @deprecated - 使用{@link enabled}属性代替
          */
         getEnabled(): boolean;
+        /**
+         * 返回此对象的字符串表示形式。
+         * @returns 字符串表示形式。
+         */
         toString(): string;
     }
     /**
      * 将颜色变换应用于DisplayObjects。
      * 
-     * Example
+     * 案例：
      * 
      * 本例绘制一个红色圆圈，然后将其转换为蓝色。这是通过将所有通道相乘为0（透明度通道除外，透明度通道设置为1），然后将255添加到蓝色通道来实现的。
-     * 
+     * ```js
      * 		var shape = new createjs.Shape().set({x:100,y:100});
      * 		shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);
      * 
@@ -733,7 +744,7 @@ declare namespace createjs {
      * 		    new createjs.ColorFilter(0,0,0,1, 0,0,255,0)
      * 		];
      * 		shape.cache(-50, -50, 100, 100);
-     * 
+     * ```
      * 有关应用滤镜的详细信息，请参见Filter。
      */
     class ColorFilter extends Filter {
