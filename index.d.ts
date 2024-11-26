@@ -745,7 +745,7 @@ declare namespace createjs {
      * 		];
      * 		shape.cache(-50, -50, 100, 100);
      * ```
-     * 有关应用滤镜的详细信息，请参见Filter。
+     * 有关应用滤镜的详细信息，请参见{@link Filter}。
      */
     class ColorFilter extends Filter {
         /**
@@ -785,11 +785,12 @@ declare namespace createjs {
     /**
      * 提供用于组合矩阵以与ColorMatrixFilter一起使用的辅助函数。大多数方法都返回实例以方便链式调用。
      * 
-     * Example
-     * 
+     * 案例：
+     * ```js
+
      * 		myColorMatrix.adjustHue(20).adjustBrightness(50);
-     * 
-     * 有关如何应用滤镜的示例，请参见Filter，或有关如何使用ColorMatrix更改DisplayObject颜色的示例，参见ColorMatrixFilter。
+     * ```
+     * 有关如何应用滤镜的示例，请参见{@link Filter}，或有关如何使用ColorMatrix更改DisplayObject颜色的示例，参见{@link ColorMatrixFilter}。
      */
     class ColorMatrix {
         constructor(brightness?: number, contrast?: number, saturation?: number, hue?: number);
@@ -798,31 +799,40 @@ declare namespace createjs {
         /**
          * 通过将指定值添加到红色、绿色和蓝色通道来调整像素颜色的亮度。正值会使图像更亮，负值会使其更暗。
          * @param value 介于-255和255之间的值，该值将添加到RGB通道中。
+         * @returns 返回该方法的ColorMatrix实例（适用于链式调用）
          */
         adjustBrightness(value: number): ColorMatrix;
         /**
-         * 调整亮度、对比度、饱和度和色相的快捷方式。相当于按顺序调用adjustHue（色相）、adjustContrast（对比度）、adjustBrightness（亮度）、adjutoSaturation（饱和度）。
+         * 调整亮度、对比度、饱和度和色相的快捷方式。
+         * 相当于按顺序调用adjustHue（色相）、adjustContrast（对比度）、adjustBrightness（亮度）、adjutoSaturation（饱和度）。
          * @param brightness 
          * @param contrast 
          * @param saturation 
          * @param hue 
+         * @returns 返回该方法的ColorMatrix实例（适用于链式调用）
          */
         adjustColor(brightness: number, contrast: number, saturation: number, hue: number): ColorMatrix;
         /**
          * 调整像素颜色的对比度。正值将增加对比度，负值将降低对比度。
          * @param value 介于-100和100之间的值。
+         * @returns 返回该方法的ColorMatrix实例（适用于链式调用）
          */
         adjustContrast(value: number): ColorMatrix;
         /**
          * 调整像素颜色的色调。
          * @param value 介于-180和180之间的值。
+         * @returns 返回该方法的ColorMatrix实例（适用于链式调用）
          */
         adjustHue(value: number): ColorMatrix;
         /**
          * 调整像素的颜色饱和度。正值将增加饱和度，负值将降低饱和度（趋向灰度）。
          * @param value 介于-100和100之间的值。
+         * @returns 返回该方法的ColorMatrix实例（适用于链式调用）
          */
         adjustSaturation(value: number): ColorMatrix;
+        /**
+         * 返回此ColorMatrix实例的克隆。
+         */
         clone(): ColorMatrix;
         /**
          * danzen新增的声明，目前还不支持，请勿使用
@@ -860,7 +870,25 @@ declare namespace createjs {
         toString(): string;
     }
     /**
-     * 允许您执行复杂的颜色操作，如修改饱和度、亮度或反转。有关更改颜色的详细信息，请参见ColorMatrix。为了更容易地进行颜色变换，请考虑ColorFilter。
+     * 允许您执行复杂的颜色操作，如修改饱和度、亮度或反转。
+     * 有关更改颜色的详细信息，请参见{@link ColorMatrix}。
+     * 为了更容易地进行颜色变换，请考虑{@link ColorFilter}。
+     * 
+     * 案例：
+     * 
+     * 此示例创建一个红色圆圈，反转其色调，然后使其饱和以使其变亮。
+     * ```js
+     * var shape = new createjs.Shape().set({x:100,y:100});
+     * shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);
+     * 
+     * var matrix = new createjs.ColorMatrix().adjustHue(180).adjustSaturation(100);
+     * shape.filters = [
+     *     new createjs.ColorMatrixFilter(matrix)
+     * ];
+     * 
+     * shape.cache(-50, -50, 100, 100);
+     * ```
+     * 有关应用滤镜的详细信息，请参{@link Filter}。
      */
     class ColorMatrixFilter extends Filter {
         constructor(matrix: number[] | ColorMatrix);
@@ -873,8 +901,18 @@ declare namespace createjs {
         clone(): ColorMatrixFilter;
     }
     /**
-     * Container是一个可嵌套的显示列表，允许您使用复合显示元素。例如，可以将手臂、腿、躯干和头部位图实例组合到一个“人物容器”中，并将它们变换为一个组，同时仍然可以相对移动各个部分。容器的子级具有与其父级Container连接的transform和alpha属性。
-     * 例如，放置在x=50且阿尔法=0.7的Container中的x=100且阿尔法=0.5的Shape将在x=150且阿尔法=0.35处渲染到画布上。容器有一些开销，所以通常不应该创建一个容器来容纳一个子容器。
+     * Container是一个可嵌套的显示列表，允许您使用复合显示元素。
+     * 例如，可以将手臂、腿、躯干和头部位图实例组合到一个“人物容器”中，并将它们变换为一个组，同时仍然可以相对移动各个部分。
+     * 容器的子级具有与其父级Container连接的transform和alpha属性。
+     * 例如，放置在x=50且阿尔法=0.7的Container中的x=100且阿尔法=0.5的Shape将在x=150且阿尔法=0.35处渲染到画布上。
+     * 容器有一些开销，所以通常不应该创建一个容器来容纳一个子容器。
+     * 
+     * 案例：
+     * ```js
+     * var container = new createjs.Container();
+     * container.addChild(bitmapInstance, shapeInstance);
+     * container.x = 100;
+     * ```
      */
     class Container extends DisplayObject {
         constructor();
