@@ -1712,7 +1712,13 @@ declare namespace createjs {
         willTrigger(type: string): boolean;
     }
 
-
+    /**
+     * MovieClip类将TweenJS Timeline与EaselJS容器相关联。
+     * 它允许您创建封装时间线动画、状态更改和同步操作的对象。
+     * MovieClip类从0.7.0开始就包含在EaselJS压缩文件中。
+     * 
+     * 目前，MovieClip只有在基于时间（而不是基于时间）的情况下才能正常工作，尽管已经做出了一些让步，以支持未来基于时间的时间表。
+     */
     class MovieClip extends Container {
         constructor(mode?: string, startPosition?: number, loop?: boolean, labels?: Object);
 
