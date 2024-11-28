@@ -1718,8 +1718,45 @@ declare namespace createjs {
      * MovieClip类从0.7.0开始就包含在EaselJS压缩文件中。
      * 
      * 目前，MovieClip只有在基于时间（而不是基于时间）的情况下才能正常工作，尽管已经做出了一些让步，以支持未来基于时间的时间表。
+     * 
+     * 案例：
+     * 
+     * 此示例来回设置两个形状的动画。灰色形状从左侧开始，但我们使用{@link gotoAndPlay}跳到动画的中点。
+     * ```js
+     * var stage = new createjs.Stage("canvas");
+     * createjs.Ticker.addEventListener("tick", stage);
+     * 
+     * var mc = new createjs.MovieClip({loop:-1, labels:{myLabel:20}});
+     * stage.addChild(mc);
+     * 
+     * var child1 = new createjs.Shape(
+     *     new createjs.Graphics().beginFill("#999999")
+     *         .drawCircle(30,30,30));
+     * var child2 = new createjs.Shape(
+     *     new createjs.Graphics().beginFill("#5a9cfb")
+     *         .drawCircle(30,30,30));
+     * 
+     * mc.timeline.addTween(
+     *     createjs.Tween.get(child1)
+     *         .to({x:0}).to({x:60}, 50).to({x:0}, 50));
+     * mc.timeline.addTween(
+     *     createjs.Tween.get(child2)
+     *         .to({x:60}).to({x:0}, 50).to({x:60}, 50));
+     * 
+     * mc.gotoAndPlay("start");
+     * ```
+     * 建议使用tween.to()来设置动画和属性（不使用持续时间来立即设置），并使用tween.wait()方法在动画之间创建延迟。
+     * 请注意，使用tween.set()方法影响属性可能无法提供所需的结果。
      */
     class MovieClip extends Container {
+        /**
+         * 应用于此实例的配置属性（例如{mode:MovieClip.SYNHED}）。
+         * MovieClip支持的道具如下。除非指定，否则这些道具都设置在相应的实例属性上。
+         * @param mode 
+         * @param startPosition 
+         * @param loop 
+         * @param labels 
+         */
         constructor(mode?: string, startPosition?: number, loop?: boolean, labels?: Object);
 
         // properties
