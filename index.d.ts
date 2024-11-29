@@ -1751,13 +1751,21 @@ declare namespace createjs {
     class MovieClip extends Container {
         /**
          * 应用于此实例的配置属性（例如{mode:MovieClip.SYNHED}）。
-         * MovieClip支持的道具如下。除非指定，否则这些道具都设置在相应的实例属性上。
-         * @param mode 
-         * @param startPosition 
-         * @param loop 
-         * @param labels 
+         * MovieClip支持的属性如下。除非指定，否则这些属性都设置在相应的实例属性上。
+         * 
+         * mode
+         * 
+         * startPosition
+         * 
+         * frameBounds
+         * 
+         * 此对象也将传递到与此MovieClip关联的Timeline实例中。有关支持的属性列表（例如paused, labels, loop, reversed等），请参阅Timeline的文档。
+         * @param props 当该属性的类型是Object时，将此对象中的属性（支持的属性：mode,startPosition,loop,labels,frameBounds,paused）复制到实例中。否则，使用该值设置实例的mode属性。
+         * @param startPosition 指定此影片剪辑中要播放的第一帧，或者如果模式为单帧，则指定要显示的唯一帧。
+         * @param loop 指定此MovieClip应循环的次数。值-1表示它应该无限循环。值为1会导致它循环一次（即总共播放两次）。
+         * @param labels 帧标签的名称。
          */
-        constructor(mode?: string, startPosition?: number, loop?: boolean, labels?: Object);
+        constructor(props?: string|Object, startPosition?: number, loop?: boolean, labels?: Object);
 
         // properties
         actionsEnabled: boolean;
