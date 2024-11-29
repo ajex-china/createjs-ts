@@ -1664,9 +1664,24 @@ declare namespace createjs {
         transformPoint(x: number, y: number, pt?: Point | Object): Point;
         translate(x: number, y: number): Matrix2D;
     }
-
-
+    /**
+     * 作为参数传递给所有鼠标/指针/触摸相关事件。
+     * 有关鼠标事件及其属性的列表，请参阅{@link DisplayObject}和{@link Stage}事件列表。
+     */
     class MouseEvent extends Event {
+        /**
+         * 
+         * @param type 
+         * @param bubbles 指示事件是否会在显示列表中冒泡。
+         * @param cancelable 
+         * @param stageX 
+         * @param stageY 
+         * @param nativeEvent 
+         * @param pointerID 
+         * @param primary 
+         * @param rawX 
+         * @param rawY 
+         */
         constructor(type: string, bubbles: boolean, cancelable: boolean, stageX: number, stageY: number, nativeEvent: NativeMouseEvent, pointerID: number, primary: boolean, rawX: number, rawY: number);
 
         // properties
