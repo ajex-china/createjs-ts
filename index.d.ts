@@ -1671,30 +1671,45 @@ declare namespace createjs {
     class MouseEvent extends Event {
         /**
          * 
-         * @param type 
+         * @param type 事件类型。
          * @param bubbles 指示事件是否会在显示列表中冒泡。
-         * @param cancelable 
-         * @param stageX 
-         * @param stageY 
-         * @param nativeEvent 
-         * @param pointerID 
-         * @param primary 
-         * @param rawX 
-         * @param rawY 
+         * @param cancelable 指示是否可以取消此事件的默认行为。
+         * @param stageX 相对于舞台的x坐标。
+         * @param stageY 相对于舞台的y坐标。
+         * @param nativeEvent 与此鼠标事件相关的原生DOM事件。
+         * @param pointerID 指针的唯一id。
+         * @param primary 是否主指针，适用于多点触控环境中。
+         * @param rawX 相对于舞台的原始x位置。
+         * @param rawY 相对于舞台的原始y位置。
+         * @param relatedTarget 鼠标事件的目标。
          */
-        constructor(type: string, bubbles: boolean, cancelable: boolean, stageX: number, stageY: number, nativeEvent: NativeMouseEvent, pointerID: number, primary: boolean, rawX: number, rawY: number);
+        constructor(type: string, bubbles: boolean, cancelable: boolean, stageX: number, stageY: number, nativeEvent: NativeMouseEvent, pointerID: number, primary: boolean, rawX: number, rawY: number, relatedTarget: DisplayObject);
 
         // properties
+        /** 指示事件是否由触摸输入（与鼠标输入相比）生成。 */
         isTouch: boolean;
+        /** 返回鼠标在当前目标（即调度器）的本地坐标系中的x位置。 */
         localX: number;
+        /** 返回鼠标在当前目标（即调度器）的本地坐标系中的y位置。 */
         localY: number;
+        /** 浏览器生成的本地MouseEvent。此事件的属性和API可能因浏览器而异。如果EaselJS属性不是直接从本机MouseEvent生成的，则此属性将为null。 */
         nativeEvent: NativeMouseEvent;
+        /** 指针（触摸点或光标）的唯一id。对于鼠标，这将是-1，或者是系统提供的id值。 */
         pointerID: number;
+        /** 是否主指针，适用于多点触控环境中。这对鼠标来说永远是正确的。对于触摸指针，当前堆栈中的第一个指针将被视为主指针。 */
         primary: boolean;
+        /** 相对于舞台的原始x位置。通常，这将与stageX值相同，除非stage.mouseMoveOutside为true并且指针在stage边界之外。 */
         rawX: number;
+        /** 相对于舞台的原始y位置。通常，这将与stageX值相同，除非stage.mouseMoveOutside为true并且指针在stage边界之外。 */
         rawY: number;
+        /**
+         * 事件的次要目标（如适用）。
+         * 这用于{@link mouseout}/{@link rollout}事件，以指示鼠标输入的对象，鼠标退出的对象的滚动/翻转，以及光标下对象的{@link stagemousedown}/{@link stagemouseup}事件（如果有的话）。
+         */
         relatedTarget: DisplayObject;
+        /** 舞台上的标准化x位置。这将始终在0到舞台宽度的范围内。 */
         stageX: number;
+        /** 舞台上的标准化y位置。这将始终在0到舞台高度的范围内。 */
         stageY: number;
         mouseMoveOutside: boolean;
 
