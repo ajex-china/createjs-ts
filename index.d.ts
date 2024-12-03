@@ -1798,15 +1798,44 @@ declare namespace createjs {
         constructor(props?: string|Object, startPosition?: number, loop?: boolean, labels?: Object);
 
         // properties
+        /**
+         * 是否执行帧代码
+         * @default true
+         */
         actionsEnabled: boolean;
+        /**
+         * 如果为true，则每当时间轴将影片剪辑添加回显示列表时，影片剪辑将自动重置为其第一帧。
+         * 这仅适用于模式为"INDEPENDENT"的MovieClip实例。
+         * 
+         * 例如，如果你有一个角色动画，其中“body”为其子显示对象（MovieClip实例）在每一帧上都有不同的服装，
+         * 你可以将body.autoReset设置为false，这样你就可以手动更改它所在的帧，而不用担心它会自动重置。
+         * @default true
+         */
         autoReset: boolean;
+        /** 构建时间，例如：Thu, 12 Oct 2017 16:34:10 GMT */
         static buildDate: string;
+        /** 返回当前帧索引。 */
         currentFrame: number;
+        /** 总帧数 */
         totalFrames: number;
+        /** 返回当前帧的标签名称。 */
         currentLabel: string;
+        /** 每一帧的矩形边界 */
         frameBounds: Rectangle[];
+        /**
+         * 默认情况下，MovieClip实例每滴答前进一帧。为MovieClip指定帧率将使其根据滴答之间的经过时间适当地前进，以保持目标帧率。
+         * 
+         * 例如，如果将帧速率为10的MovieClip放置在以40fps更新的舞台上，则MovieClip将大约每4个滴答前进一帧。
+         * 这并不准确，因为每个滴答之间的时间在帧之间会略有不同。
+         * 
+         * 此功能取决于传递到{@link update}中的滴答事件对象（或具有适当“delta”属性的对象）。
+         */
         framerate: number;
+        /**
+         * MovieClip将独立于其父级前进（播放），即使其父级已暂停。这是默认模式。
+         */
         static INDEPENDENT: string;
+        /** 返回一个具有标签和位置（也称为帧）属性的对象数组，按位置排序。 */
         labels: Object[];
         loop: boolean;
         mode: string;
