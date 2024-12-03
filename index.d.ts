@@ -1717,10 +1717,10 @@ declare namespace createjs {
         clone(): MouseEvent;
         
         // EventDispatcher mixins
-        addEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): Function;
-        addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
-        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean; }, useCapture?: boolean): Object;
-        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
+        addEventListener(type: string, listener: (eventObj: Object) => boolean|void, useCapture?: boolean): Function;
+        //addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
+        addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => boolean|void; }, useCapture?: boolean): Object;
+        //addEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): Object;
         dispatchEvent(eventObj: Object | string | Event, target?: Object): boolean;
         hasEventListener(type: string): boolean;
         off(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): void;
