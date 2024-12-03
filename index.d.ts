@@ -1715,7 +1715,7 @@ declare namespace createjs {
 
         // methods
         clone(): MouseEvent;
-
+        
         // EventDispatcher mixins
         addEventListener(type: string, listener: (eventObj: Object) => boolean, useCapture?: boolean): Function;
         addEventListener(type: string, listener: (eventObj: Object) => void, useCapture?: boolean): Function;
