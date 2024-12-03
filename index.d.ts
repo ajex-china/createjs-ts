@@ -1714,7 +1714,7 @@ declare namespace createjs {
         mouseMoveOutside: boolean;
 
         // methods
-        clone(): MouseEvent;
+        /*clone(): MouseEvent;
         
         // EventDispatcher mixins
         addEventListener(type: string, listener: (eventObj: Object) => boolean|void, useCapture?: boolean): Function;
@@ -1739,7 +1739,7 @@ declare namespace createjs {
         removeEventListener(type: string, listener: { handleEvent: (eventObj: Object) => void; }, useCapture?: boolean): void;
         removeEventListener(type: string, listener: Function, useCapture?: boolean): void; // It is necessary for "arguments.callee"
         toString(): string;
-        willTrigger(type: string): boolean;
+        willTrigger(type: string): boolean;*/
     }
 
     /**
