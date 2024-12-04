@@ -1837,7 +1837,11 @@ declare namespace createjs {
         static INDEPENDENT: string;
         /** 返回一个具有标签和位置（也称为帧）属性的对象数组，按位置排序。 */
         labels: Object[];
-        loop: boolean;
+        /**
+         * 指定此MovieClip应循环的次数。值-1表示它应该无限循环。值为1会导致它循环一次（即总共播放两次）。
+         * @default -1
+         */
+        loop: number;
         mode: string;
         paused: boolean;
         static SINGLE_FRAME: string;
