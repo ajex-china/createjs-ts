@@ -1842,6 +1842,11 @@ declare namespace createjs {
          * @default -1
          */
         loop: number;
+        /**
+         * 控制此MovieClip如何推进其时间。必须是0-INDEPENDENT（独立）、1-SINGLE_FRAME（单帧）或2-SYNCHED（同步）之一。
+         * 有关行为的描述，请参见每个常数。
+         * @default null
+         */
         mode: string;
         paused: boolean;
         static SINGLE_FRAME: string;
