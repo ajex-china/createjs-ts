@@ -924,7 +924,10 @@ declare namespace createjs {
         mouseChildren: boolean;
         /** 返回容器中的子级数。 */
         numChildren: number;
-        /** 如果为false，则tick将不会传播到此容器的子级。这可以提供一些性能优势。除了阻止“tick”事件被调度外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite&MovieClip帧前进、DOMElement可见性处理）。 */
+        /** 如果为false，则tick将不会传播到此容器的子级。
+         * 这可以提供一些性能优势。除了阻止“tick”事件被调度外，它还将阻止某些显示对象上与tick相关的更新（例如Sprite&MovieClip帧前进、DOMElement可见性处理）。
+         * @default true
+         */
         tickChildren: boolean;
 
         // methods
@@ -1848,9 +1851,26 @@ declare namespace createjs {
          * @default null
          */
         mode: string;
+        /**
+         * 是否暂停。
+         * 如果为真，则勾选后MovieClip的位置将不会前进。
+         * @default false
+         */
         paused: boolean;
+        /**
+         * MovieClip将仅显示一帧（由startPosition属性决定）。
+         * @default "single"
+         */
         static SINGLE_FRAME: string;
+        /**
+         * 指定此电影剪辑中要播放的第一帧，或者如果模式为单帧，则指定要显示的唯一帧。
+         * @default 0
+         */
         startPosition: number;
+        /**
+         * MovieClip仅在其父级前进时才会前进，并将同步到父级MovieClip的位置。
+         * @default "synched"
+         */
         static SYNCHED: string;
         timeline: Timeline;
         duration: number;
