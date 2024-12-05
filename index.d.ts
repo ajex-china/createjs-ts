@@ -942,14 +942,52 @@ declare namespace createjs {
         addChildAt(...childOrIndex: (DisplayObject|number)[]): DisplayObject; // actually (...child: DisplayObject[], index: number)
 
         clone(recursive?: boolean): Container;
+        /**
+         * 如果指定的显示对象是此容器或是此容器的后代（子、孙等），则返回true。
+         * @param child 要检查的显示对象。
+         * @returns 如果指定的显示对象是此容器或其子级之一，则返回true。
+         */
         contains(child: DisplayObject): boolean;
+        /**
+         * 返回指定索引处的子显示对象。如果索引超出范围，则返回null。
+         * 
+         * 案例：
+         * ```js
+         * container.getChildAt(2);
+         * ```
+         * @param index 要返回的子显示对象的索引。
+         * @returns 指定索引处的子显示对象。如果索引超出范围，则返回null。
+         */
         getChildAt(index: number): DisplayObject;
+        /**
+         * 返回具有指定名称的首个子显示对象。
+         * @param name 要查找的显示对象的名称。
+         * @returns 具有指定名称的首个子显示对象。
+         */
         getChildByName(name: string): DisplayObject;
+        /**
+         * 返回显示列表中指定子显示对象的索引，如果不在显示列表中，则返回-1。
+         * 
+         * 案例：
+         * ```js
+         * var index = container.getChildIndex(child);
+         * ```
+         * @param child 要检查的显示对象。
+         * @returns 显示列表中指定子显示对象的索引，如果不在显示列表中，则返回-1。
+         */
         getChildIndex(child: DisplayObject): number;
         /**
-         * @deprecated - use numChildren property instead.
+         * @deprecated - 使用{@link numChildren}属性代替。
          */
         getNumChildren(): number;
+        /**
+         * 返回此容器显示列表中指定坐标下的所有显示对象的数组。此程序忽略任何将{@link mouseEnabled}设置为false的显示对象。
+         * 数组将按视觉深度顺序排序，最顶部的显示对象位于索引0处。这使用基于形状的碰撞检测，并且运行起来可能是一项消耗性能的操作，因此最好谨慎使用。
+         * 例如，如果测试鼠标下的对象，请在tick（而不是{@link stagemousemove}）上进行测试，并且仅当鼠标的位置发生变化时才进行测试。
+         * @param x 
+         * @param y 
+         * @param mode 
+         */
         getObjectsUnderPoint(x: number, y: number, mode: number): DisplayObject[];
         /**
          * 与getObjectsUnderPoint功能相似，但仅返回最上层的显示对象。该方法执行效率比getObjectsUnderPoint高。但性能开销仍然不少，详情查看getObjectsUnderPoint的注释。
