@@ -1372,10 +1372,65 @@ declare namespace createjs {
         static STROKE_JOINTS_MAP: string[];
 
         // methods
+        /**
+         * 将图形命令对象附加到图形队列。
+         * 该命令对象公开了一个“exec”方法，该方法接受两个参数：要操作的Context2D和传递到draw中的任意数据对象。
+         * 后者通常是调用draw的Shape实例。
+         * 
+         * 此方法由图形方法（如drawCircle）在内部使用，但也可以直接用于插入内置或自定义图形命令。例如：
+         * ```js
+         * // attach data to our shape, so we can access it during the draw:
+         * myShape.color = "red";
+         * 
+         * // append a Circle command object:
+         * myShape.graphics.append(new createjs.Graphics.Circle(50, 50, 30));
+         * 
+         * // append a custom command object with an exec method that sets the fill style
+         * // based on the shape's data, and then fills the circle.
+         * myShape.graphics.append({exec:function(ctx, shape) {
+         *     ctx.fillStyle = shape.color;
+         *     ctx.fill();
+         * }});
+         * ```
+         * @param command 
+         * @param clean 
+         * @returns 返回Graphics实例（用于链式调用）
+         */
         append(command: Object, clean?: boolean): Graphics;
+        /**
+         * 绘制一条由半径、startAngle和endAngle参数定义的弧，以位置（x，y）为中心。
+         * 例如，要绘制一个以（100100）为中心、半径为20的完整圆：
+         * ```js
+         * arc(100, 100, 20, 0, Math.PI*2);
+         * ```
+         * 有关详细信息，请阅读whatwg规范。一个微小的API方法“A”也存在。
+         * @param x 
+         * @param y 
+         * @param radius 半径
+         * @param startAngle 开始弧度
+         * @param endAngle 结束弧度
+         * @param anticlockwise 
+         * @returns 返回Graphics实例（用于链式调用）
+         */
         arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): Graphics;
+        /**
+         * 绘制具有指定控制点和半径的圆弧。有关详细信息，请阅读whatwg规范。一个微小的API方法“at”也存在。
+         * @param x1 
+         * @param y1 
+         * @param x2 
+         * @param y2 
+         * @param radius 
+         * @returns 返回Graphics实例（用于链式调用）
+         */
         arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Graphics;
-        beginBitmapFill(image: Object, repetition?: string, matrix?: Matrix2D): Graphics;
+        /**
+         * 使用指定的图像开始填充图案。这将结束当前的子路径。一个微小的API方法“bf”也存在。
+         * @param image 用于填充的图像源（Image, Canvas, 或 Video），图像源必须要加载完成才能用于填充，否则填充为空。
+         * @param repetition 可选。指示是否在填充区域中重复图像。"repeat"、"repeat-x"、"repreat-y"或"no-repeat"中的一个。默认为"repeat"。请注意，Firefox不支持“repeat-x”或“repeat-y”（最新测试在FF 20.0中），默认为“repeat”。
+         * @param matrix 
+         * @returns 返回Graphics实例（用于链式调用）
+         */
+        beginBitmapFill(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition?: string, matrix?: Matrix2D): Graphics;
         beginBitmapStroke(image: Object, repetition?: string): Graphics;
         beginFill(color: string): Graphics;
         beginLinearGradientFill(colors: string[], ratios: number[], x0: number, y0: number, x1: number, y1: number): Graphics;
