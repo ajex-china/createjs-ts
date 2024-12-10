@@ -996,12 +996,61 @@ declare namespace createjs {
          * @param mode 匹配模式，0为所有、1为启用鼠标交互的、2为启用鼠标交互且不透明的对象。
          */
         getObjectUnderPoint(x: number, y: number, mode: number): DisplayObject;
+        /**
+         * 从显示列表中删除所有子项。
+         * 
+         * 案例：
+         * ```js
+         * container.removeAllChildren();
+         * ```
+         */
         removeAllChildren(): void;
+        /**
+         * 从显示列表中删除指定的子项。请注意，如果索引已知，使用removeChildAt()会更快。
+         * @param child 要删除的子显示对象。
+         * @returns 如果成功删除了子显示对象，则返回true。
+         */
         removeChild(...child: DisplayObject[]): boolean;
+        /**
+         * 从显示列表中删除指定索引处的子项，并将其父项设置为null。如果索引未知，请使用removeChild()。
+         * 
+         * 案例：
+         * ```js
+         * container.removeChildAt(2);
+         * ```
+         * 您还可以删除多个子项：
+         * 
+         * 案例：
+         * ```js
+         * container.removeChild(2, 7, ...)
+         * ```
+         * 如果子项（或多个子项）被删除，则返回true，如果任何索引超出范围，则返回false。
+         * @param index 要删除的子显示对象的索引。
+         * @returns 如果成功删除了子显示对象，则返回true。
+         */
         removeChildAt(...index: number[]): boolean;
+        /**
+         * 更改指定子对象的深度。如果子对象不是此容器的子对象，或者索引超出范围，则会自动失败。
+         * @param child 要更改的子显示对象。
+         * @param index 要更改的子显示对象的索引。
+         */
         setChildIndex(child: DisplayObject, index: number): void;
+        /**
+         * 对子列表执行数组排序操作。
+         * @param sortFunction 用于对子列表进行排序的函数。有关详细信息，请参阅JavaScript的Array.sort文档。
+         */
         sortChildren(sortFunction: (a: DisplayObject, b: DisplayObject) => number): void;
+        /**
+         * 交换显示列表中指定的子项深度。如果任一子节点不是此容器的子节点，则会自动失败。
+         * @param child1 
+         * @param child2 
+         */
         swapChildren(child1: DisplayObject, child2: DisplayObject): void;
+        /**
+         * 在指定的索引处交换子项。如果任一索引超出范围，则自动失败。
+         * @param index1 
+         * @param index2 
+         */
         swapChildrenAt(index1: number, index2: number): void;
     }
     /**
