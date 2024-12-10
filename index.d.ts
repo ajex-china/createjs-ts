@@ -1141,7 +1141,9 @@ declare namespace createjs {
          */
         protected _tick(evtObj?: Object): void;
         /** 
-         * 将显示对象绘制到新元素中，然后用于后续绘制。适用于不经常更改的复杂内容（例如，具有许多不移动的子项的容器，或复杂的矢量形状），这可以提供更快的渲染，因为内容不需要在每帧中重新渲染。缓存的显示对象可以自由移动、旋转、褪色等，但如果其内容发生变化，则必须再次调用updateCache()手动更新缓存。您必须通过x、y、w和h参数指定缓存区域。这定义了将使用此显示对象的坐标渲染和缓存的矩形。
+         * 将显示对象绘制到新元素中，然后用于后续绘制。适用于不经常更改的复杂内容（例如，具有许多不移动的子项的容器，或复杂的矢量形状），
+         * 这可以提供更快的渲染，因为内容不需要在每帧中重新渲染。缓存的显示对象可以自由移动、旋转、褪色等，但如果其内容发生变化，则必须再次调用updateCache()手动更新缓存。
+         * 您必须通过x、y、w和h参数指定缓存区域。这定义了将使用此显示对象的坐标渲染和缓存的矩形。
          * 
          * 演示案例
          * 例如你定义了一个圆形半径为25像素，坐标为(0, 0)：
@@ -1152,7 +1154,8 @@ declare namespace createjs {
          * 
          * 请注意，滤镜需要在应用缓存之前声明，否则您必须要在应用滤镜之后调用updateCache。查看Filter类以获取更多信息。某些滤镜（例如BlurFilter）可能无法与scale参数一起按预期工作。
          * 通常，生成的cacheCanvas宽度和高度都应用了scale，但是一些过滤器（例如BlurFilter）会增加一些填充，这些填充可能不在缓存的区域。
-         * 在以前的版本中，缓存是在DisplayObject上处理的，但后来被转移到了BitmapCache。这允许更容易的交互和替代缓存方法，如WebGL和StageGL。有关选项对象的更多信息，请参阅BitmapCache定义。
+         * 在以前的版本中，缓存是在DisplayObject上处理的，但后来被转移到了BitmapCache。这允许更容易的交互和替代缓存方法，如WebGL和StageGL。
+         * 有关选项对象的更多信息，请参阅BitmapCache定义。
          * 
          * @param x 缓存区域的x坐标原点。
          * @param y 缓存区域的y坐标原点。
@@ -1305,7 +1308,8 @@ declare namespace createjs {
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
         set(props: Object): DisplayObject;
         /**
-         * 允许您手动设置对象的边界，这些对象要么无法计算自己的边界（例如，形状和文本）以供将来引用，要么可以将对象包含在容器边界中。手动设置的边界将始终覆盖计算的边界。边界应该在对象的局部（未转换的）坐标中指定。例如，一个以(0,0)为中心的半径为25px的圆的Shape实例的边界为(-25，-25，50，50)。
+         * 允许您手动设置对象的边界，这些对象要么无法计算自己的边界（例如，形状和文本）以供将来引用，要么可以将对象包含在容器边界中。
+         * 手动设置的边界将始终覆盖计算的边界。边界应该在对象的局部（未转换的）坐标中指定。例如，一个以(0,0)为中心的半径为25px的圆的Shape实例的边界为(-25，-25，50，50)。
          * @param x 
          * @param y 
          * @param width 
@@ -1348,10 +1352,20 @@ declare namespace createjs {
         constructor(visible?: number, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number);
 
         // properties
+        /** 表示将应用于显示对象的alpha的属性。 */
         alpha: number;
+        /**
+         * 表示将应用于显示对象的compositeOperation的属性。
+         * 您可以在以下位置找到有效的复合操作列表：https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Compositing
+         */
         compositeOperation: string;
+        /**
+         * 将应用于显示对象的变换矩阵。
+         */
         matrix: Matrix2D;
+        /** 表示将应用于显示对象的投影的属性。 */
         shadow: Shadow;
+        /** 表示将应用于显示对象的可见值的属性。 */
         visible: boolean;
 
         // methods
@@ -1392,8 +1406,26 @@ declare namespace createjs {
          */
         setValues(visible?: boolean, alpha?: number, shadow?: number, compositeOperation?: number, matrix?: number): DisplayProps;
     }
-
-
+    /**
+     * DOMElement允许您将HTMLElement与显示列表相关联。它将在DOM中转换，就像它是添加到其中的容器的子级一样。
+     * 但是，它不会被渲染到画布上，因此将保留它相对于画布的任何z索引（即，它将被绘制在画布的上方或下方）。
+     * 
+     * DOMElement的位置相对于其在DOM中的父节点。建议将DOM对象添加到也包含画布的div中，以便它们在页面上共享相同的位置。
+     * 
+     * DOMElement可用于将HTML元素定位在画布内容之上，以及用于要显示在画布边界之外的元素。例如，一个包含丰富HTML内容的工具提示。
+     * 
+     * 鼠标交互
+     * 
+     * DOMElement实例不是完整的EaselJS显示对象，也不参与EaselJS鼠标事件或支持hitTest等方法。
+     * 要从DOMElement获取鼠标事件，您必须向htmlElement添加处理程序（注意，这不支持EventDispatcher）
+     * ```js
+     * var domElement = new createjs.DOMElement(htmlElement);
+     * domElement.htmlElement.onclick = function() {
+     *     console.log("clicked");
+     * }
+     * ```
+     * 重要事项：需要特别注意该类的绘制，如果你调用stage.update/stage.draw
+     */
     class DOMElement extends DisplayObject {
         constructor(htmlElement: HTMLElement);
 
