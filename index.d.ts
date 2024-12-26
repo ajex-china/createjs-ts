@@ -1306,6 +1306,17 @@ declare namespace createjs {
          * @param pt 
          */
         localToLocal(x: number, y: number, target: DisplayObject, pt?: Point | Object): Point;
+        /**
+         * 提供一种可链接的快捷方式，用于在实例上设置多个属性。
+         * 
+         * 案例：
+         * ```js
+         * var myGraphics = new createjs.Graphics().beginFill("#ff0000").drawCircle(0, 0, 25);
+         * var shape = stage.addChild(new Shape()).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
+         * ```
+         * @param props 一个包含要复制到DisplayObject实例的属性的通用对象。
+         * @returns {DisplayObject} 返回方法被调用的实例（对于链式调用很有用）。
+         */
         set(props: Object): DisplayObject;
         /**
          * 允许您手动设置对象的边界，这些对象要么无法计算自己的边界（例如，形状和文本）以供将来引用，要么可以将对象包含在容器边界中。
@@ -1430,6 +1441,7 @@ declare namespace createjs {
         constructor(htmlElement: HTMLElement);
 
         // properties
+        /** 要管理的DOM对象。 */
         htmlElement: HTMLElement;
 
         // methods
@@ -1444,7 +1456,23 @@ declare namespace createjs {
         static buildDate: string;
         static version: string;
     }
-
+    /**
+     * 所有滤镜的基类。滤镜需要应用于使用缓存方法缓存的对象。如果对象发生更改，请再次缓存它，或使用{@link updateCache}。请注意，在缓存之前必须应用过滤器。
+     * 
+     * 案例：
+     * ```js
+     * myInstance.filters = [
+     *     new createjs.ColorFilter(0, 0, 0, 1, 255, 0, 0),
+     *     new createjs.BlurFilter(5, 5, 10)
+     * ];
+     * myInstance.cache(0,0, 100, 100);
+     * ```
+     * 请注意，每个滤镜都可以实现一个{@link getBounds}方法，该方法返回需要应用的边距，以便完全显示滤镜。例如，{@link BlurFilter}（模糊滤镜）将导致对象向外移动，从而在形状周围产生边距。
+     * 
+     * EaselJS 滤镜
+     * 
+     * EaselJS附带了许多预构建的滤镜：
+     */
     class Filter {
         constructor();
 
