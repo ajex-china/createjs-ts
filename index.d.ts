@@ -21,6 +21,23 @@ interface NativeMouseEvent extends MouseEvent {
 }
 
 declare namespace createjs {
+    export class Types {
+        static BINARY:string
+        static CSS:string
+        static FONT:string
+        static FONTCSS:string
+        static IMAGE:string
+        static JAVASCRIPT:string
+        static MANIFEST:string
+        static SOUND:string
+        static VIDEO:string
+        static JSON:string
+        static JSONP:string
+        static SPRITESHEET:string
+        static SVG:string
+        static TEXT:string
+        static XML:string
+    }
     /**
      * 包含所有事件共享的属性和方法，以便与{@link EventDispatcher}一起使用。
      * 请注意，事件对象经常被重用，因此您永远不应该依赖于事件对象在调用堆栈之外的状态。
