@@ -1,0 +1,7 @@
+{
+    "out": "docs",
+    "name": "createjs-docs",
+    "entryPoints": ["index.d.ts"],
+    "theme": "default",
+    "readme": "README.md"
+}
